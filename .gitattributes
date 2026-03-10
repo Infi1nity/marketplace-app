@@ -1,0 +1,20 @@
+# .gitattributes
+# Автоматически определять текстовые файлы и нормализовать окончания
+* text=auto
+
+# Явно указать для JS/TS файлов
+*.js text eol=lf
+*.ts text eol=lf
+*.jsx text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+
+# Для Python файлов
+*.py text eol=lf
+
+# Бинарные файлы не менять
+*.png binary
+*.jpg binary
+*.ico binary
