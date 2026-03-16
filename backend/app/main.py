@@ -4,6 +4,9 @@ from sqlalchemy import text
 from app.core.database import SessionLocal
 from fastapi.middleware.cors import CORSMiddleware 
 
+from app.modules.products.router import router as product_router
+
+
 app = FastAPI(title="marketplace-app")
 
 
@@ -34,4 +37,7 @@ async def test_db():
             result = db.execute(text("SELECT 1")).scalar()
             return {"status": "connected", "result": result}
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        return {"status": "error", "message": str(e)} 
+    
+
+app.include_router(product_router, prefix='/api/v1', tags=["Products"])  # 👈 вот так!
