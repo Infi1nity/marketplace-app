@@ -1,13 +1,11 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-
 import { BrowserRouter, Routes, Route, Link } from 'react-router';
 import Home from './pages/Home';
 import Catalog from './pages/Catalog';
 import ProductDetail from './pages/ProductDetail';
 import NotFound from './pages/NotFound';
+import ProductListPage from './pages/ProductListPage';
+import ProductDetailPage from './pages/ProductDetailPage'
 
 
 function App() {
@@ -19,6 +17,7 @@ function App() {
           <ul>
             <li><Link to="/">Главная</Link></li>
             <li><Link to="/catalog">Каталог</Link></li>
+            <li><Link to="/products">Товары</Link></li>
             <li><Link to="/product/1">Товар 1</Link></li>
             <li><Link to="/product/2">Товар 2</Link></li>
           </ul>
@@ -30,6 +29,8 @@ function App() {
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/products" element={<ProductListPage />} />
+          <Route path="/products/:slug" element={<ProductDetailPage />} />
         </Routes>
       </div>
     </BrowserRouter>

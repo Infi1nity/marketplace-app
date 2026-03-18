@@ -1,36 +1,37 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  baseURL: 'http://localhost:8000/api/v1',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// Перехватчик запросов
+api.interceptors.request.use(config => {
+  console.log('🔍 ПОЛНЫЙ URL:', config.baseURL + config.url);
+  console.log('🔍 baseURL:', config.baseURL);
+  console.log('🔍 url:', config.url);
+  console.log('🔍 method:', config.method);
+  console.log('🔍 params:', config.params);
+  console.log('🔍 headers:', config.headers);
+  return config;
+});
 
+// Перехватчик ответов
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Токен истек — удаляем и перенаправляем на логин
-      localStorage.removeItem('access_token');
-      window.location = '/login';
-    }
-    
-    // Пробрасываем ошибку дальше с понятным сообщением
-    const message = error.response?.data?.detail || error.message;
-    return Promise.reject({ ...error, message });
+  response => {
+    console.log('✅ УСПЕХ:', response.status, response.config.url);
+    return response;
+  },
+  error => {
+    console.error('❌ ОШИБКА:', {
+      status: error.response?.status,
+      url: error.config?.baseURL + error.config?.url,
+      data: error.response?.data
+    });
+    return Promise.reject(error);
   }
 );
 
