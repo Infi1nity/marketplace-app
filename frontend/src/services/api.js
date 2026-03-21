@@ -1,36 +1,46 @@
+// frontend/src/services/api.js
 import axios from 'axios';
+import { getToken } from '../utils/auth';
 
 const api = axios.create({
   baseURL: 'http://localhost:8000/api/v1',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
+  }
+});
+
+// 👇 ПЕРЕХВАТЧИК ЗАПРОСОВ - добавляет токен к каждому запросу
+api.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      console.log('🔑 Token added to request:', config.url);
+    }
+    return config;
   },
-});
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-// Перехватчик запросов
-api.interceptors.request.use(config => {
-  console.log('🔍 ПОЛНЫЙ URL:', config.baseURL + config.url);
-  console.log('🔍 baseURL:', config.baseURL);
-  console.log('🔍 url:', config.url);
-  console.log('🔍 method:', config.method);
-  console.log('🔍 params:', config.params);
-  console.log('🔍 headers:', config.headers);
-  return config;
-});
-
-// Перехватчик ответов
+// 👇 ПЕРЕХВАТЧИК ОТВЕТОВ - обрабатывает ошибки авторизации
 api.interceptors.response.use(
-  response => {
-    console.log('✅ УСПЕХ:', response.status, response.config.url);
-    return response;
-  },
-  error => {
-    console.error('❌ ОШИБКА:', {
-      status: error.response?.status,
-      url: error.config?.baseURL + error.config?.url,
-      data: error.response?.data
-    });
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Токен истек или невалиден
+      console.log('🔒 Unauthorized - clearing token');
+      
+      // Очищаем localStorage (но не вызываем logout из AuthContext,
+      // чтобы избежать циклической зависимости)
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user_data');
+      
+      // Перенаправляем на страницу логина
+      window.location.href = '/login';
+    }
     return Promise.reject(error);
   }
 );

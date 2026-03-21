@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+from typing import Optional, List
 from datetime import datetime
 
 class ProductCreate(BaseModel):
@@ -20,3 +21,17 @@ class ProductRead(BaseModel):
     category_id: int | None = None
     created_at: datetime
     updated_at: datetime | None = None
+
+class CategoryBase(BaseModel):
+    name: str
+    slug: str
+    description: Optional[str] = None
+    parent_id: Optional[int] = None
+
+class CategoryRead(CategoryBase):
+    id: int
+    
+    model_config = ConfigDict(from_attributes=True)
+
+class CategoryWithChildren(CategoryRead):
+    children: List["CategoryRead"] = []  # вложенные подкатегории

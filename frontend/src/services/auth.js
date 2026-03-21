@@ -1,15 +1,25 @@
+// frontend/src/services/auth.js
 import api from './api';
 
 export const authApi = {
-  login: (email, password) => 
-    api.post('/auth/login', { email, password }),
+  // Регистрация
+  register: (userData) => api.post('/auth/register', userData),
   
-  register: (userData) => 
-    api.post('/auth/register', userData),
+  // Логин
+  login: (credentials) => api.post('/auth/login', credentials),
   
-  logout: () => 
-    api.post('/auth/logout'),
+  // Получить профиль
+  getProfile: () => api.get('/auth/profile'),
   
-  getProfile: () => 
-    api.get('/auth/profile'),
+  // Обновить профиль
+  updateProfile: (userData) => api.put('/auth/profile', userData),
+  
+  // Сменить пароль
+  changePassword: (passwords) => api.post('/auth/change-password', passwords),
+  
+  // Выйти (опционально)
+  logout: () => api.post('/auth/logout'),
+  
+  // Проверить токен
+  verifyToken: () => api.get('/auth/verify-token')
 };

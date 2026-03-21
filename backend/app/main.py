@@ -4,8 +4,8 @@ from sqlalchemy import text
 from app.core.database import SessionLocal
 from fastapi.middleware.cors import CORSMiddleware 
 
-from app.modules.products.router import router as product_router
-
+from app.modules.products.router import product_router, category_router
+from app.modules.users.router import router as users_router
 
 app = FastAPI(title="marketplace-app")
 
@@ -40,4 +40,6 @@ async def test_db():
         return {"status": "error", "message": str(e)} 
     
 
-app.include_router(product_router, prefix='/api/v1', tags=["Products"])  # 👈 вот так!
+app.include_router(product_router, prefix='/api/v1', tags=["Products"])
+app.include_router(category_router, prefix='/api/v1', tags=["Categories"])
+app.include_router(users_router, prefix='/api/v1', tags=["Auth"])

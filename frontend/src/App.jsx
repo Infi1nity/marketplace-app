@@ -1,38 +1,47 @@
 import './App.css'
 import { BrowserRouter, Routes, Route, Link } from 'react-router';
+import { AuthProvider } from './contexts/AuthContext';
 import Home from './pages/Home';
 import Catalog from './pages/Catalog';
 import ProductDetail from './pages/ProductDetail';
 import NotFound from './pages/NotFound';
 import ProductListPage from './pages/ProductListPage';
 import ProductDetailPage from './pages/ProductDetailPage'
+import Header from './components/Header';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 
 function App() {
   return (
     <BrowserRouter>
-      <div>
-        {/* Навигационное меню */}
-        <nav>
-          <ul>
-            <li><Link to="/">Главная</Link></li>
-            <li><Link to="/catalog">Каталог</Link></li>
-            <li><Link to="/products">Товары</Link></li>
-            <li><Link to="/product/1">Товар 1</Link></li>
-            <li><Link to="/product/2">Товар 2</Link></li>
-          </ul>
-        </nav>
+      <AuthProvider>  {/* 👈 ВОТ ТАК - оборачиваем всё, что использует авторизацию */}
+        <Header />
+        <main className="main-content">
+          {/* Навигационное меню */}
+          <nav>
+            <ul>
+              <li><Link to="/">Главная</Link></li>
+              <li><Link to="/catalog">Каталог</Link></li>
+              <li><Link to="/products">Товары</Link></li>
+              <li><Link to="/product/1">Товар 1</Link></li>
+              <li><Link to="/product/2">Товар 2</Link></li>
+            </ul>
+          </nav>
 
-        {/* Здесь React Router будет подставлять компоненты */}
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/catalog" element={<Catalog />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="*" element={<NotFound />} />
-          <Route path="/products" element={<ProductListPage />} />
-          <Route path="/products/:slug" element={<ProductDetailPage />} />
-        </Routes>
-      </div>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/catalog" element={<Catalog />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="*" element={<NotFound />} />
+            <Route path="/products" element={<ProductListPage />} />
+            <Route path="/products/:slug" element={<ProductDetailPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+      </AuthProvider>  {/* 👈 Закрываем провайдер */}
     </BrowserRouter>
   );
 }

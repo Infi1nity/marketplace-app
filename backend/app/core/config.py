@@ -36,4 +36,6 @@ class Settings(BaseSettings):
         ge=1
     )
 
+    ALGORITHM: str = Field(default="HS256")
+
 settings = Settings()
