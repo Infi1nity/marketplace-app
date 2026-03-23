@@ -1,0 +1,13 @@
+/* ===================================
+   REGISTER PAGE STYLES
+   Uses LoginPage.css styles
+   Dark Purple Theme
+   =================================== */
+
+/* 
+   Register page uses the same styles as Login page.
+   Import LoginPage.css for shared auth styles:
+   @import './LoginPage.css';
+*/
+
+/* Additional register-specific styles can be added here if needed */

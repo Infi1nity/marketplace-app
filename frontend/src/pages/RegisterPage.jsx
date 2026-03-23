@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../contexts/AuthContext';
-// import './RegisterPage.css';
+import './RegisterPage.css';
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -19,7 +19,6 @@ function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  // Обработчик изменения полей
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -31,18 +30,15 @@ function RegisterPage() {
     }
   };
 
-  // Валидация формы
   const validateForm = () => {
     const newErrors = {};
     
-    // Email
     if (!formData.email) {
       newErrors.email = 'Email обязателен';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Неверный формат email';
     }
     
-    // Username
     if (!formData.username) {
       newErrors.username = 'Имя пользователя обязательно';
     } else if (formData.username.length < 3) {
@@ -51,19 +47,16 @@ function RegisterPage() {
       newErrors.username = 'Только буквы, цифры и _';
     }
     
-    // Полное имя (опционально)
     if (formData.full_name && formData.full_name.length > 100) {
       newErrors.full_name = 'Максимум 100 символов';
     }
     
-    // Пароль
     if (!formData.password) {
       newErrors.password = 'Пароль обязателен';
     } else if (formData.password.length < 6) {
       newErrors.password = 'Минимум 6 символов';
     }
     
-    // Подтверждение пароля
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Пароли не совпадают';
     }
@@ -72,7 +65,6 @@ function RegisterPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Отправка формы
   const handleSubmit = async (e) => {
     e.preventDefault();
     setServerError('');
@@ -84,14 +76,11 @@ function RegisterPage() {
     setIsLoading(true);
     
     try {
-      // Убираем confirmPassword перед отправкой
       const { confirmPassword, ...userData } = formData;
       
       const result = await register(userData);
       
       if (result.success) {
-        // После успешной регистрации можно либо сразу залогинить,
-        // либо перенаправить на страницу логина
         navigate('/login', { 
           state: { message: 'Регистрация успешна! Теперь войдите.' }
         });

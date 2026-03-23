@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../contexts/AuthContext';
-// import './LoginPage.css';
+import './LoginPage.css';
 
 function LoginPage() {
   const [formData, setFormData] = useState({
@@ -16,20 +16,17 @@ function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  // Обработчик изменения полей
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
-    // Очищаем ошибку поля при вводе
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
-  // Валидация формы
   const validateForm = () => {
     const newErrors = {};
     
@@ -49,7 +46,6 @@ function LoginPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Отправка формы
   const handleSubmit = async (e) => {
     e.preventDefault();
     setServerError('');
@@ -64,7 +60,7 @@ function LoginPage() {
       const result = await login(formData.email, formData.password);
       
       if (result.success) {
-        navigate('/products'); // или на главную
+        navigate('/products');
       } else {
         setServerError(result.error || 'Ошибка входа');
       }

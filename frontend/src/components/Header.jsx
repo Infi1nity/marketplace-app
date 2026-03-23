@@ -3,19 +3,39 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { categoriesApi } from '../services/categories';
 import './Header.css';
-import { useAuth } from '../contexts/AuthContext'; // Импортируем хук
-
+import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../contexts/CartContext';
 
 function Header() {
-
-  const { user, isAuthenticated, logout } = useAuth();
-  // ========== СОСТОЯНИЯ ==========
-  const [categories, setCategories] = useState([]);      // список категорий для меню
-  const [loading, setLoading] = useState(true);          // загрузка категорий
-  const [activeMenu, setActiveMenu] = useState(null);    // какое меню открыто (для десктопа)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // меню на мобилках
-  const [searchQuery, setSearchQuery] = useState('');     // поисковый запрос
+  // ========== ХУКИ (должны быть в одном месте) ==========
+  let auth = null;
+  let cart = null;
   
+  try {
+    auth = useAuth();
+  } catch (e) {
+    console.warn('AuthProvider not ready yet');
+  }
+  
+  try {
+    cart = useCart();
+  } catch (e) {
+    console.warn('CartProvider not ready yet');
+  }
+
+  // Безопасное получение значений
+  const user = auth?.user || null;
+  const isAuthenticated = auth?.isAuthenticated || false;
+  const logout = auth?.logout || (() => {});
+  const totalItems = cart?.totalItems || 0;
+
+  // ========== СОСТОЯНИЯ ==========
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeMenu, setActiveMenu] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
   const navigate = useNavigate();
 
   // ========== ЗАГРУЗКА КАТЕГОРИЙ ==========
@@ -23,12 +43,10 @@ function Header() {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        // Загружаем дерево категорий
         const response = await categoriesApi.getTree();
         setCategories(response.data);
       } catch (error) {
         console.error('Ошибка загрузки категорий:', error);
-        // Если не удалось загрузить, показываем заглушку или пустое меню
         setCategories([]);
       } finally {
         setLoading(false);
@@ -39,8 +57,6 @@ function Header() {
   }, []);
 
   // ========== ОБРАБОТЧИКИ ==========
-  
-  // Поиск
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -50,21 +66,22 @@ function Header() {
     }
   };
 
-  // Переход в категорию
   const handleCategoryClick = (slug) => {
     navigate(`/products?category=${slug}`);
     setActiveMenu(null);
     setMobileMenuOpen(false);
   };
 
-  // Открытие/закрытие мобильного меню
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
-  
-  // Рекурсивное отображение подменю
   const renderSubMenu = (items, level = 0) => {
     if (!items || items.length === 0) return null;
     
@@ -88,7 +105,6 @@ function Header() {
               )}
             </Link>
             
-            {/* Рекурсивно отображаем подкатегории */}
             {item.children && item.children.length > 0 && (
               renderSubMenu(item.children, level + 1)
             )}
@@ -102,14 +118,12 @@ function Header() {
   return (
     <header className="header">
       <div className="header-container">
-        {/* Логотип */}
         <div className="logo">
           <Link to="/">
             <h1>Marketplace</h1>
           </Link>
         </div>
 
-        {/* Поиск (десктоп) */}
         <form className="search-form" onSubmit={handleSearch}>
           <input
             type="text"
@@ -123,23 +137,35 @@ function Header() {
           </button>
         </form>
 
-        {/* Иконки пользователя и корзины */}
         <div className="user-actions">
-          <Link to="/cart" className="cart-icon">
+          <Link to="/cart" className="cart-link">
             🛒 Корзина
+            {totalItems > 0 && (
+              <span className="cart-badge">{totalItems}</span>
+            )}
           </Link>
-          <Link to="/profile" className="profile-icon">
-            👤 Профиль
-          </Link>
+          
+          {isAuthenticated ? (
+            <div className="profile-menu">
+              <Link to="/profile" className="profile-icon">
+                👤 {user?.username}
+              </Link>
+              <button onClick={handleLogout} className="logout-btn">
+                Выйти
+              </button>
+            </div>
+          ) : (
+            <Link to="/login" className="login-link">
+              👤 Войти
+            </Link>
+          )}
         </div>
 
-        {/* Кнопка мобильного меню */}
         <button className="mobile-menu-button" onClick={toggleMobileMenu}>
           {mobileMenuOpen ? '✕' : '☰'}
         </button>
       </div>
 
-      {/* Навигационное меню категорий (десктоп) */}
       <nav className="categories-nav">
         <div className="categories-container">
           {loading ? (
@@ -163,7 +189,6 @@ function Header() {
                     )}
                   </Link>
                   
-                  {/* Подменю */}
                   {category.children && category.children.length > 0 && (
                     renderSubMenu(category.children)
                   )}
@@ -174,9 +199,7 @@ function Header() {
         </div>
       </nav>
 
-      {/* Мобильное меню */}
       <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
-        {/* Поиск в мобильном меню */}
         <form className="mobile-search-form" onSubmit={handleSearch}>
           <input
             type="text"
@@ -190,7 +213,6 @@ function Header() {
           </button>
         </form>
 
-        {/* Категории в мобильном меню */}
         <div className="mobile-categories">
           <h3>Категории</h3>
           {loading ? (
@@ -225,14 +247,25 @@ function Header() {
           )}
         </div>
 
-        {/* Ссылки на пользовательские разделы в мобильном меню */}
         <div className="mobile-user-actions">
           <Link to="/cart" onClick={() => setMobileMenuOpen(false)}>
             🛒 Корзина
           </Link>
-          <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
-            👤 Профиль
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
+                👤 Профиль
+              </Link>
+              <Link to="/orders" className="orders-link">📦 Заказы</Link>
+              <button onClick={handleLogout} className="mobile-logout-btn">
+                Выйти
+              </button>
+            </>
+          ) : (
+            <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+              👤 Войти
+            </Link>
+          )}
         </div>
       </div>
     </header>

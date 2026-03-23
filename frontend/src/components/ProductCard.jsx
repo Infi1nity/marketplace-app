@@ -2,6 +2,8 @@ import React from 'react';
 // import PropTypes from 'prop-types';
 import './ProductCard.css';
 import { Link } from 'react-router';
+import FavoriteButton from './FavoriteButton'
+
 
 function ProductCard({ product, onAddToCart }) {
     if (!product) {
@@ -14,6 +16,9 @@ function ProductCard({ product, onAddToCart }) {
 
       return (
     <div className="product-card">
+      <div className="product-card-header">
+        <FavoriteButton product={product} />  {/* 👈 Сердечко */}
+      </div>
       {/* Оборачиваем изображение и название в ссылку */}
       <Link to={`/products/${product.slug}`} className="product-link">
         {product.image ? (

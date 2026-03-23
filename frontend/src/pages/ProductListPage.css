@@ -1,5 +1,292 @@
-/* .product-list-page {
-  max-width: 1200px;
+/* ===================================
+   PRODUCT LIST PAGE STYLES
+   Dark Purple Theme
+   =================================== */
+
+.product-list-page {
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
-} */
+  padding: 2rem;
+}
+
+/* ========== PAGE TITLE ========== */
+.page-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: var(--text-primary);
+}
+
+/* ========== FILTERS SECTION ========== */
+.filters-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+}
+
+/* ========== SEARCH FORM ========== */
+.filters-section .search-form {
+  flex: 1;
+  min-width: 280px;
+  display: flex;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  transition: var(--transition-bounce);
+}
+
+.filters-section .search-form:focus-within {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.15);
+}
+
+.filters-section .search-input {
+  flex: 1;
+  padding: 0.875rem 1.25rem;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.filters-section .search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.filters-section .search-button {
+  padding: 0.875rem 1.5rem;
+  background: var(--accent-gradient);
+  border: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-bounce);
+}
+
+.filters-section .search-button:hover {
+  filter: brightness(1.1);
+}
+
+/* ========== CATEGORY FILTERS ========== */
+.category-filters {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.category-filters button {
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-bounce);
+}
+
+.category-filters button:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-primary);
+  color: var(--accent-light);
+}
+
+.category-filters button.active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+}
+
+/* ========== RESET FILTERS BUTTON ========== */
+.reset-filters {
+  padding: 0.75rem 1.25rem;
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--error);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-bounce);
+}
+
+.reset-filters:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: var(--error);
+}
+
+/* ========== PRODUCTS INFO ========== */
+.products-info {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.products-info p {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* ========== PRODUCTS GRID ========== */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* ========== NO PRODUCTS ========== */
+.no-products {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+}
+
+.no-products p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.no-products button {
+  padding: 0.875rem 2rem;
+  background: var(--accent-gradient);
+  border: none;
+  border-radius: var(--radius-md);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-bounce);
+}
+
+.no-products button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(123, 44, 191, 0.4);
+}
+
+/* ========== PAGINATION ========== */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+}
+
+.pagination-button {
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-bounce);
+}
+
+.pagination-button:hover:not(:disabled) {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+}
+
+.pagination-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  padding: 0 1rem;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1200px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .filters-section {
+    flex-direction: column;
+  }
+  
+  .filters-section .search-form {
+    min-width: 100%;
+  }
+  
+  .category-filters {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.5rem;
+  }
+  
+  .category-filters button {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-list-page {
+    padding: 1rem;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+  }
+  
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .pagination {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .page-info {
+    width: 100%;
+    text-align: center;
+    order: -1;
+  }
+}
+
+@media (max-width: 480px) {
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .filters-section {
+    padding: 1rem;
+  }
+  
+  .pagination-button {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+}

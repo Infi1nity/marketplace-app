@@ -157,7 +157,7 @@ function ProductListPage() {
   return (
     <div className="product-list-page">
       {/* Заголовок страницы */}
-      <h1 className="page-title">Все товары</h1>
+      {/* <h1 className="page-title">Все товары</h1> */}
       
       {/* Секция фильтров */}
       <div className="filters-section">
