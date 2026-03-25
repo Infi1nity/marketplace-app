@@ -1,26 +1,36 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, List
 from datetime import datetime
 
-class ProductCreate(BaseModel):
-    name: str
-    slug: str
-    description: str | None = None
-    price: float
-    stock: int = 0
-    category_id: int | None = None
+class ProductBase(BaseModel):
+    name: str = Field(..., min_length=3, max_length=200)
+    slug: str = Field(..., min_length=3, max_length=200)
+    description: Optional[str] = None
+    price: float = Field(..., gt=0)
+    stock: int = Field(default=0, ge=0)
+    is_active: bool = True
+    category_id: Optional[int] = None
+    image: Optional[str] = Field(None, max_length=500)
 
-class ProductRead(BaseModel):
+class ProductCreate(ProductBase):
+    pass
+
+class ProductUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=3, max_length=200)
+    slug: Optional[str] = Field(None, min_length=3, max_length=200)
+    description: Optional[str] = None
+    price: Optional[float] = Field(None, gt=0)
+    stock: Optional[int] = Field(None, ge=0)
+    is_active: Optional[bool] = None
+    category_id: Optional[int] = None
+    image: Optional[str] = Field(None, max_length=500)
+
+class ProductRead(ProductBase):
     id: int
-    name: str
-    slug: str
-    description: str | None = None
-    price: float
-    stock: int
-    is_active: bool
-    category_id: int | None = None
     created_at: datetime
-    updated_at: datetime | None = None
+    updated_at: Optional[datetime] = None
+    
+    model_config = ConfigDict(from_attributes=True)
 
 class CategoryBase(BaseModel):
     name: str

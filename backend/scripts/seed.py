@@ -62,40 +62,42 @@ def seed_categories(db):
     return categories
 
 def seed_products(db, categories):
-    """Создание тестовых товаров"""
+    """Создание тестовых товаров с изображениями"""
     products_data = [
         # Электроника
-        ("iPhone 15", "Смартфон Apple", 999.99, 15, categories[0].id),
-        ("Samsung TV", "4K Smart TV", 599.99, 8, categories[0].id),
-        ("Ноутбук Asus", "Для работы и игр", 1299.99, 5, categories[0].id),
+        ("iPhone 15", "iphone-15", "Смартфон Apple", 999.99, 15, categories[0].id, "https://m.media-amazon.com/images/I/71vKy5OHuPL.jpg"),
+        ("Samsung TV", "samsung-tv", "4K Smart TV", 599.99, 8, categories[0].id, "https://dehanzewitgoed.nl/wp-content/uploads/2024/02/bfd5a476b0c2f4f65aba0471f3d99359.jpg"),
+        ("Ноутбук Asus", "notebook-asus", "Для работы и игр", 1299.99, 5, categories[0].id, "https://cdn.kns.ru/linkpics/asus-proart-p16-oled-h7606wx-se042x-90nb17e1-m002w0_kod_1017686-small.jpg"),
+        ("Наушники Sony", "sony-headphones", "Беспроводные", 199.99, 20, categories[0].id, "https://netbox.by/image/cache/catalog/Sony/Sony-WF-C500-black-3-min-417x417.jpg"),
         
         # Одежда
-        ("Футболка", "Хлопок 100%", 29.99, 50, categories[1].id),
-        ("Джинсы", "Синие классические", 79.99, 30, categories[1].id),
-        ("Куртка", "Осенняя", 149.99, 12, categories[1].id),
+        ("Футболка", "t-shirt", "Хлопок 100%", 29.99, 50, categories[1].id, "https://cdn.idol.ru/upload/resize_cache/items/50/id/560_747_1713348519/id4242062618_50_00.jpg"),
+        ("Джинсы", "jeans", "Синие классические", 79.99, 30, categories[1].id, "https://conteshop.ru/media/catalog/product/cache/11/image/1405x1879/602f0fa2c1f0d1ba5e241f914e856ff9/e/5/e54fd779db6fe597bf62d42b79681b47.jpg?v=11"),
+        ("Куртка", "jacket", "Осенняя", 149.99, 12, categories[1].id, "https://rivernord.com/images/items/01-classic-winter-original-gray.jpg"),
         
         # Книги
-        ("Python для всех", "Учебник по Python", 49.99, 20, categories[2].id),
-        ("Война и мир", "Толстой Л.Н.", 19.99, 100, categories[2].id),
+        ("Python для всех", "python-for-all", "Учебник по Python", 49.99, 20, categories[2].id, "https://dmkpress.com/images/cms/data/978-5-93700-104-7.jpg"),
+        ("Война и мир", "war-and-peace", "Толстой Л.Н.", 19.99, 100, categories[2].id, "https://m.media-amazon.com/images/I/912F83swwRL._UF1000,1000_QL80_.jpg"),
         
         # Дом и сад
-        ("Набор посуды", "6 предметов", 89.99, 15, categories[3].id),
-        ("Горшок для цветов", "Керамический", 14.99, 40, categories[3].id),
+        ("Набор посуды", "dishes-set", "6 предметов", 89.99, 15, categories[3].id, "https://posudacenter.ru/upload/iblock/0e0/0e08474f59ac28d18610926eca93c10e.jpg"),
+        ("Горшок для цветов", "flower-pot", "Керамический", 14.99, 40, categories[3].id, "https://storage.yandexcloud.net/mostro-gm-media/8eddfcdb-1acc-4fb9-363c-22eff32cb82c/1.jpg"),
         
         # Спорт
-        ("Гантели 5кг", "Пара", 39.99, 25, categories[4].id),
-        ("Коврик для йоги", "Противоскользящий", 24.99, 35, categories[4].id),
+        ("Гантели 5кг", "dumbbells-5kg", "Пара", 39.99, 25, categories[4].id, "https://ultra-wod.com/image/cache/catalog/ultra/products/ganteli/gantel_5_1000x1000-1000x1000.jpg"),
+        ("Коврик для йоги", "yoga-mat", "Противоскользящий", 24.99, 35, categories[4].id, "https://static.insales-cdn.com/images/products/1/3402/590269770/YM301_800%D1%85800_.jpg"),
     ]
     
     products = []
-    for name, desc, price, stock, cat_id in products_data:
+    for name, slug, desc, price, stock, cat_id, image_url in products_data:
         product = Product(
             name=name,
-            slug=name.lower().replace(" ", "-"),
+            slug=slug,
             description=desc,
             price=price,
             stock=stock,
             category_id=cat_id,
+            image=image_url,  # 👈 ДОБАВЛЯЕМ ИЗОБРАЖЕНИЕ
             is_active=True
         )
         db.add(product)
@@ -171,6 +173,8 @@ def seed_orders(db, users, products):
                     price=item['price']
                 )
                 db.add(order_item)
+
+    
 
 def main():
     """Главная функция"""

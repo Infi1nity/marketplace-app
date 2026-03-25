@@ -20,6 +20,12 @@ function CartPage() {
   } = useCart();
   const { isAuthenticated } = useAuth();
 
+  // Обработчик ошибки загрузки изображения
+  const handleImageError = (e) => {
+    e.target.src = 'https://picsum.photos/id/20/80/80';
+    e.target.onerror = null;
+  };
+
   if (loading) {
     return (
       <div className="cart-loading">
@@ -64,14 +70,22 @@ function CartPage() {
         <div className="cart-items">
           {items.map(item => (
             <div key={item.id} className="cart-item">
+              {/* Изображение товара */}
               <div className="cart-item-image">
                 {item.product?.image ? (
-                  <img src={item.product.image} alt={item.product.name} />
+                  <img 
+                    src={item.product.image} 
+                    alt={item.product.name}
+                    onError={handleImageError}
+                  />
                 ) : (
-                  <div className="no-image">Нет фото</div>
+                  <div className="no-image">
+                    <span>📷</span>
+                  </div>
                 )}
               </div>
 
+              {/* Информация о товаре */}
               <div className="cart-item-info">
                 <Link to={`/products/${item.product?.slug}`} className="cart-item-name">
                   {item.product?.name || `Товар #${item.product_id}`}
@@ -81,6 +95,7 @@ function CartPage() {
                 </div>
               </div>
 
+              {/* Количество */}
               <div className="cart-item-quantity">
                 <button
                   onClick={() => decreaseItem(item.id, item.quantity)}
@@ -99,10 +114,12 @@ function CartPage() {
                 </button>
               </div>
 
+              {/* Сумма за позицию */}
               <div className="cart-item-total">
                 {((item.product?.price || 0) * item.quantity).toLocaleString('ru-RU')} ₽
               </div>
 
+              {/* Кнопка удаления */}
               <button
                 onClick={() => removeItem(item.id)}
                 disabled={updatingItems[item.id]}
@@ -131,18 +148,17 @@ function CartPage() {
             <span>{totalPrice.toLocaleString('ru-RU')} ₽</span>
           </div>
 
-          <button className="checkout-btn">
-            Оформить заказ
-          </button>
-
-          <button onClick={clearCart} className="clear-cart-btn">
-            Очистить корзину
-          </button>
-
+          {/* Кнопка оформления заказа */}
           <Link to="/checkout" className="checkout-btn">
             Оформить заказ
           </Link>
 
+          {/* Кнопка очистки корзины */}
+          <button onClick={clearCart} className="clear-cart-btn">
+            Очистить корзину
+          </button>
+
+          {/* Предупреждение для неавторизованных */}
           {!isAuthenticated && (
             <div className="cart-auth-warning">
               <p>

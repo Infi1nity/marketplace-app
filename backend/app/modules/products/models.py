@@ -26,14 +26,14 @@ class Product(Base):
     stock = Column(Integer, default=0)
     is_active = Column(Boolean, default=True)
     
-    # Внешние ключи
+    # 👇 НОВОЕ ПОЛЕ ДЛЯ ИЗОБРАЖЕНИЯ
+    image = Column(String(500), nullable=True)  # URL изображения
+    
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
     
-    # Временные метки
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     
-    # Связи
     category = relationship("Category", back_populates="products")
     cart_items = relationship("CartItem", back_populates="product")
     order_items = relationship("OrderItem", back_populates="product")

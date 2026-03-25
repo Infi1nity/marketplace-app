@@ -12,7 +12,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import { FavoritesProvider } from './contexts/FavoritesContext';
 import FavoritesPage from './pages/FavoritesPage';
-// import { CartProvider } from './path/to/CartProvider';
+import { CartProvider } from './contexts/CartContext';
 import { OrdersProvider } from './contexts/OrdersContext';
 import CheckoutPage from './pages/CheckoutPage';
 import OrdersPage from './pages/OrdersPage';
@@ -22,7 +22,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>  {/* 👈 ВОТ ТАК - оборачиваем всё, что использует авторизацию */}
-        {/* <CartProvider> */}
+        <CartProvider>
           <FavoritesProvider>
             <OrdersProvider>
               <Header />
@@ -54,7 +54,7 @@ function App() {
               </main>
             </OrdersProvider>
           </FavoritesProvider>
-        {/* </CartProvider> */}
+        </CartProvider>
       </AuthProvider>  {/* 👈 Закрываем провайдер */}
     </BrowserRouter>
   );

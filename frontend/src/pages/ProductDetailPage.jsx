@@ -1,44 +1,74 @@
 // frontend/src/pages/ProductDetailPage.jsx
-
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router';  // хуки для работы с URL и навигацией
+import { useParams, useNavigate } from 'react-router';
 import { productsApi } from '../services/products';
+import AddToCartButton from '../components/AddToCartButton'; // 👈 импортируем компонент кнопки
 import './ProductDetailPage.css';
 
 function ProductDetailPage() {
   // ========== ХУКИ ==========
-  // useParams получает параметры из URL (например, /products/iphone-15 → { slug: "iphone-15" })
   const { slug } = useParams();
-  
-  // useNavigate для программной навигации (перенаправления)
   const navigate = useNavigate();
 
   // ========== СОСТОЯНИЯ ==========
-  const [product, setProduct] = useState(null);        // данные товара
-  const [loading, setLoading] = useState(true);        // индикатор загрузки
-  const [error, setError] = useState(null);            // ошибка
-  const [quantity, setQuantity] = useState(1);         // количество для добавления в корзину
-  const [activeImage, setActiveImage] = useState(0);   // индекс активного изображения (если несколько фото)
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [activeImage, setActiveImage] = useState(0);
+  const [imageError, setImageError] = useState(false); // 👈 для обработки ошибок загрузки
+
+  // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
+  
+  // Получение основного изображения
+  const getMainImage = () => {
+    if (product?.images && product.images.length > 0) {
+      return product.images[activeImage];
+    }
+    if (product?.image) {
+      return product.image;
+    }
+    return null;
+  };
+
+  // Получение всех изображений (для миниатюр)
+  const getAllImages = () => {
+    if (product?.images && product.images.length > 0) {
+      return product.images;
+    }
+    if (product?.image) {
+      return [product.image];
+    }
+    return [];
+  };
+
+  // Обработка ошибки загрузки изображения
+  const handleImageError = (e) => {
+    if (!imageError) {
+      setImageError(true);
+      e.target.src = 'https://picsum.photos/id/20/400/400'; // fallback изображение
+      e.target.onerror = null;
+    }
+  };
 
   // ========== ЗАГРУЗКА ДАННЫХ ==========
   useEffect(() => {
-    // Функция для загрузки товара по slug
     const fetchProduct = async () => {
       try {
         setLoading(true);
         setError(null);
+        setImageError(false);
         
         console.log('Загружаем товар с slug:', slug);
         
-        // Вызываем API для получения товара
         const response = await productsApi.getBySlug(slug);
         console.log('Получен товар:', response.data);
         
         setProduct(response.data);
+        setActiveImage(0); // сбрасываем активное изображение
       } catch (err) {
         console.error('Ошибка загрузки товара:', err);
         
-        // Если товар не найден (404) — перенаправляем на страницу 404
         if (err.response?.status === 404) {
           navigate('/404', { replace: true });
         } else {
@@ -52,27 +82,17 @@ function ProductDetailPage() {
     if (slug) {
       fetchProduct();
     }
-  }, [slug, navigate]); // Эффект перезапустится, если изменится slug
+  }, [slug, navigate]);
 
   // ========== ОБРАБОТЧИКИ ==========
   
-  // Добавление в корзину
-  const handleAddToCart = () => {
-    console.log('Добавляем в корзину:', { product: product.id, quantity });
-    // TODO: реализовать добавление в корзину через API
-    alert(`Товар "${product.name}" добавлен в корзину (${quantity} шт.)`);
-  };
-
-  // Изменение количества
   const handleQuantityChange = (delta) => {
     setQuantity(prev => {
       const newValue = prev + delta;
-      // Не меньше 1 и не больше остатка на складе
       return Math.max(1, Math.min(newValue, product?.stock || 99));
     });
   };
 
-  // Переход к списку товаров
   const handleBackToCatalog = () => {
     navigate('/products');
   };
@@ -107,10 +127,13 @@ function ProductDetailPage() {
     );
   }
 
+  const mainImage = getMainImage();
+  const allImages = getAllImages();
+  const hasMultipleImages = allImages.length > 1;
+
   // ========== ОСНОВНОЙ РЕНДЕРИНГ ==========
   return (
     <div className="product-detail-page">
-      {/* Кнопка "Назад" */}
       <button className="back-button" onClick={handleBackToCatalog}>
         ← Назад в каталог
       </button>
@@ -120,26 +143,36 @@ function ProductDetailPage() {
         <div className="product-images">
           {/* Главное изображение */}
           <div className="main-image">
-            {product.images && product.images.length > 0 ? (
+            {mainImage ? (
               <img 
-                src={product.images[activeImage]} 
+                src={mainImage} 
                 alt={product.name}
+                onError={handleImageError}
               />
             ) : (
-              <div className="no-image">Нет фото</div>
+              <div className="no-image">
+                <span className="no-image-icon">📷</span>
+                <span>Изображение отсутствует</span>
+              </div>
             )}
           </div>
 
           {/* Миниатюры (если есть несколько фото) */}
-          {product.images && product.images.length > 1 && (
+          {hasMultipleImages && (
             <div className="thumbnail-list">
-              {product.images.map((img, index) => (
+              {allImages.map((img, index) => (
                 <div 
                   key={index}
                   className={`thumbnail ${index === activeImage ? 'active' : ''}`}
                   onClick={() => setActiveImage(index)}
                 >
-                  <img src={img} alt={`${product.name} - ${index + 1}`} />
+                  <img 
+                    src={img} 
+                    alt={`${product.name} - ${index + 1}`}
+                    onError={(e) => {
+                      e.target.src = 'https://picsum.photos/id/20/80/80';
+                    }}
+                  />
                 </div>
               ))}
             </div>
@@ -172,7 +205,7 @@ function ProductDetailPage() {
             )}
           </div>
 
-          {/* Артикул / ID (опционально) */}
+          {/* Артикул */}
           <div className="product-sku">Артикул: {product.id}</div>
 
           {/* Описание */}
@@ -184,7 +217,7 @@ function ProductDetailPage() {
           )}
 
           {/* Характеристики (если есть) */}
-          {product.attributes && (
+          {product.attributes && Object.keys(product.attributes).length > 0 && (
             <div className="product-attributes">
               <h3>Характеристики</h3>
               <table className="attributes-table">
@@ -219,12 +252,11 @@ function ProductDetailPage() {
                 </button>
               </div>
 
-              <button 
-                className="add-to-cart-button"
-                onClick={handleAddToCart}
-              >
-                Добавить в корзину
-              </button>
+              <AddToCartButton 
+                product={product} 
+                quantity={quantity}
+                className="detail-add-to-cart-btn"
+              />
             </div>
           )}
         </div>
