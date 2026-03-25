@@ -14,24 +14,27 @@ app = FastAPI(title="marketplace-app")
 
 
 origins = [
-    "http://localhost:5173",      # Vite
-    "http://127.0.0.1:5173",      # localhost через IP
-    "http://localhost:3000", 
-    # "https://для продакшена здесь домен должен быть потом"
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
+    "*",  # Для разработки - разрешаем все источники
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins, 
-    allow_credentials=True,         # Разрешить куки/авторизацию
-    allow_methods=["*"],            # Разрешить все методы (GET, POST, и т.д.)
-    allow_headers=["*"],            # Разрешить все заголовки
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
 @app.get('/')
 def home():
-    return {"Hello": "dasasdasdd"}
+    return {"Hello": "marketplace"}
 
 @app.get("/db-test")
 async def test_db():

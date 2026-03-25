@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { favoritesApi } from '../services/favorites';
 import { useAuth } from './AuthContext';
 
@@ -6,39 +6,40 @@ const FavoritesContext = createContext(null);
 
 export const FavoritesProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [updatingIds, setUpdatingIds] = useState({});
   const { isAuthenticated } = useAuth();
 
-  // Загрузка избранного при авторизации
-  useEffect(() => {
-    if (isAuthenticated) {
-      loadFavorites();
-    } else {
+  const loadFavorites = useCallback(async () => {
+    if (!isAuthenticated) {
       setFavorites([]);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await favoritesApi.getFavorites();
+      setFavorites(response.data || []);
+    } catch (err) {
+      console.error('Error loading favorites:', err);
+      setError(err.response?.data?.detail || 'Ошибка загрузки избранного');
+    } finally {
       setLoading(false);
     }
   }, [isAuthenticated]);
 
-  const loadFavorites = async () => {
-    try {
-      setLoading(true);
-      const response = await favoritesApi.getFavorites();
-      setFavorites(response.data);
-    } catch (error) {
-      console.error('Error loading favorites:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    loadFavorites();
+  }, [loadFavorites]);
 
-  const isFavorite = (productId) => {
+  const isFavorite = useCallback((productId) => {
     return favorites.some(f => f.product_id === productId);
-  };
+  }, [favorites]);
 
   const toggleFavorite = async (productId) => {
     if (!isAuthenticated) {
-      // Если не авторизован, перенаправляем на логин
       window.location.href = '/login';
       return;
     }
@@ -53,8 +54,8 @@ export const FavoritesProvider = ({ children }) => {
         const response = await favoritesApi.addToFavorites(productId);
         setFavorites(prev => [...prev, response.data]);
       }
-    } catch (error) {
-      console.error('Error toggling favorite:', error);
+    } catch (err) {
+      console.error('Error toggling favorite:', err);
     } finally {
       setUpdatingIds(prev => ({ ...prev, [productId]: false }));
     }
@@ -63,6 +64,7 @@ export const FavoritesProvider = ({ children }) => {
   const value = {
     favorites,
     loading,
+    error,
     updatingIds,
     isFavorite,
     toggleFavorite,

@@ -1,6 +1,6 @@
 # backend/app/modules/cart/router.py
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import List
 from datetime import datetime
 
@@ -76,17 +76,13 @@ def get_cart(
 ):
     """
     Получить корзину текущего пользователя.
-    Возвращает все товары в корзине с информацией о количестве и цене.
     """
     cart = get_or_create_cart(db, current_user.id)
     
-    # Загружаем товары в корзине
-    items = db.query(CartItem).filter(CartItem.cart_id == cart.id).all()
-    
-    # Для каждого элемента подгружаем информацию о товаре
-    for item in items:
-        product = db.query(Product).filter(Product.id == item.product_id).first()
-        item.product = product  # Добавляем для схемы
+    # Загружаем товары в корзине с продуктами
+    items = db.query(CartItem).options(
+        joinedload(CartItem.product)
+    ).filter(CartItem.cart_id == cart.id).all()
     
     cart.items = items
     
@@ -124,11 +120,11 @@ def add_to_cart(
         check_stock(product, new_quantity)
         
         existing_item.quantity = new_quantity
-        existing_item.added_at = datetime.now()  # обновляем дату добавления
+        existing_item.added_at = datetime.now()
         db.commit()
         db.refresh(existing_item)
         
-        # Подгружаем информацию о товаре
+        # Загружаем продукт
         existing_item.product = product
         return existing_item
     else:
@@ -142,7 +138,7 @@ def add_to_cart(
         db.commit()
         db.refresh(new_item)
         
-        # Подгружаем информацию о товаре
+        # Добавляем продукт
         new_item.product = product
         return new_item
 
@@ -157,28 +153,27 @@ def update_cart_item(
     """
     Изменить количество товара в корзине.
     """
-    # Проверяем, что элемент принадлежит пользователю
     item = validate_cart_item_ownership(db, item_id, current_user.id)
-    
-    # Проверяем товар и наличие на складе
     product = validate_product_exists(db, item.product_id)
-    check_stock(product, update.quantity)
     
     # Если количество = 0, удаляем элемент
     if update.quantity <= 0:
         db.delete(item)
         db.commit()
-        raise HTTPException(
-            status_code=status.HTTP_204_NO_CONTENT,
-            detail="Item removed from cart"
+        return schemas.CartItemRead(
+            id=item_id,
+            cart_id=item.cart_id,
+            product_id=item.product_id,
+            quantity=0,
+            added_at=item.added_at,
+            product=None
         )
     
-    # Обновляем количество
+    check_stock(product, update.quantity)
+    
     item.quantity = update.quantity
     db.commit()
     db.refresh(item)
-    
-    # Подгружаем информацию о товаре
     item.product = product
     
     return item
@@ -193,7 +188,6 @@ def remove_cart_item(
     """
     Удалить товар из корзины полностью.
     """
-    # Проверяем, что элемент принадлежит пользователю
     item = validate_cart_item_ownership(db, item_id, current_user.id)
     
     db.delete(item)
@@ -202,15 +196,13 @@ def remove_cart_item(
     return None
 
 
-# ========== ДОПОЛНИТЕЛЬНЫЕ ЭНДПОИНТЫ ==========
-
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
 def clear_cart(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
-    Очистить всю корзину (удалить все товары).
+    Очистить всю корзину.
     """
     cart = db.query(Cart).filter(Cart.user_id == current_user.id).first()
     if cart:
@@ -227,7 +219,7 @@ def increase_item_quantity(
     db: Session = Depends(get_db)
 ):
     """
-    Увеличить количество товара на 1 (удобно для фронтенда).
+    Увеличить количество товара на 1.
     """
     item = validate_cart_item_ownership(db, item_id, current_user.id)
     product = validate_product_exists(db, item.product_id)
@@ -261,9 +253,13 @@ def decrease_item_quantity(
     if new_quantity <= 0:
         db.delete(item)
         db.commit()
-        raise HTTPException(
-            status_code=status.HTTP_204_NO_CONTENT,
-            detail="Item removed from cart"
+        return schemas.CartItemRead(
+            id=item_id,
+            cart_id=item.cart_id,
+            product_id=item.product_id,
+            quantity=0,
+            added_at=item.added_at,
+            product=None
         )
     
     item.quantity = new_quantity

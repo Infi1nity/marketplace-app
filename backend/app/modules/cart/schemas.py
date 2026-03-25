@@ -1,5 +1,5 @@
 # backend/app/modules/cart/schemas.py
-from pydantic import BaseModel, Field, ConfigDict, model_validator
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List
 from datetime import datetime
 
@@ -16,15 +16,20 @@ class CartItemCreate(CartItemBase):
 
 class CartItemUpdate(BaseModel):
     """Обновление элемента корзины (количество)"""
-    quantity: int = Field(..., ge=1, le=999, description="Новое количество")
+    quantity: int = Field(..., ge=0, le=999, description="Новое количество")
+
+# ========== ПРОДУКТ В КОРЗИНЕ ==========
+
+class ProductInCart(BaseModel):
+    """Информация о продукте внутри корзины"""
+    id: int
+    name: str
+    price: float
+    image: Optional[str] = None
+    slug: str
+    description: Optional[str] = None
     
-    @model_validator(mode='after')
-    def validate_quantity(self) -> 'CartItemUpdate':
-        if self.quantity < 1:
-            raise ValueError('Quantity must be at least 1')
-        if self.quantity > 999:
-            raise ValueError('Quantity cannot exceed 999')
-        return self
+    model_config = ConfigDict(from_attributes=True)
 
 # ========== СХЕМЫ ДЛЯ ОТВЕТОВ ==========
 
@@ -37,7 +42,7 @@ class CartItemRead(BaseModel):
     added_at: datetime
     
     # Вложенные данные о товаре (для удобства фронтенда)
-    # product: Optional['ProductRead'] = None
+    product: Optional[ProductInCart] = None
     
     model_config = ConfigDict(from_attributes=True)
 
@@ -57,15 +62,13 @@ class CartRead(BaseModel):
     
     model_config = ConfigDict(from_attributes=True)
     
-    @model_validator(mode='after')
-    def calculate_totals(self) -> 'CartRead':
-        """Вычисляем общее количество и стоимость"""
-        self.total_items = sum(item.quantity for item in self.items)
-        self.total_price = sum(
+    @property
+    def total(self) -> float:
+        """Общая стоимость корзины"""
+        return sum(
             item.quantity * (item.product.price if item.product else 0) 
             for item in self.items
         )
-        return self
 
 # ========== ДЛЯ СИНХРОНИЗАЦИИ КОРЗИНЫ (гость -> авторизованный) ==========
 
@@ -86,8 +89,8 @@ class CartItemBulkCreate(BaseModel):
 
 class CartItemBulkResponse(BaseModel):
     """Ответ на массовое добавление"""
-    added: List[int]  # id добавленных элементов
-    errors: List[dict]  # ошибки по товарам
+    added: List[int]
+    errors: List[dict]
 
 # ========== УДАЛЕНИЕ ИЗ КОРЗИНЫ ==========
 
@@ -95,14 +98,3 @@ class CartClearResponse(BaseModel):
     """Ответ на очистку корзины"""
     success: bool = True
     message: str = "Cart cleared successfully"
-
-# ========== ДЛЯ СВЯЗИ С ДРУГИМИ МОДУЛЯМИ ==========
-
-# Импортируем ProductRead из модуля products (для аннотации типов)
-# Это нужно делать в конце файла, чтобы избежать циклических импортов
-# from typing import TYPE_CHECKING
-# if TYPE_CHECKING:
-#     from app.modules.products.schemas import ProductRead
-
-# # Обновляем аннотацию для product
-# CartItemRead.model_rebuild()

@@ -1,5 +1,5 @@
 import './App.css'
-import { BrowserRouter, Routes, Route, Link } from 'react-router';
+import { BrowserRouter, Routes, Route } from 'react-router';
 import { AuthProvider } from './contexts/AuthContext';
 import ProductListPage from './pages/ProductListPage';
 import ProductDetail from './pages/ProductDetail';
@@ -8,6 +8,7 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import Header from './components/Header';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ProfilePage from './pages/ProfilePage';
 import { FavoritesProvider } from './contexts/FavoritesContext';
 import FavoritesPage from './pages/FavoritesPage';
 import { CartProvider } from './contexts/CartContext';
@@ -33,6 +34,7 @@ function App() {
                   <Route path="/product/:id" element={<ProductDetail />} />
                   <Route path="/products/:slug" element={<ProductDetailPage />} />
                   <Route path="/cart" element={<CartPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
                   <Route path="/checkout" element={<CheckoutPage />} />

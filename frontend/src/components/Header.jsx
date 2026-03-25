@@ -1,4 +1,3 @@
-// frontend/src/components/Header.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { categoriesApi } from '../services/categories';
@@ -7,38 +6,21 @@ import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 
 function Header() {
-  // ========== ХУКИ (должны быть в одном месте) ==========
-  let auth = null;
-  let cart = null;
-  
-  try {
-    auth = useAuth();
-  } catch (e) {
-    console.warn('AuthProvider not ready yet');
-  }
-  
-  try {
-    cart = useCart();
-  } catch (e) {
-    console.warn('CartProvider not ready yet');
-  }
+  const auth = useAuth();
+  const cart = useCart();
 
-  // Безопасное получение значений
   const user = auth?.user || null;
   const isAuthenticated = auth?.isAuthenticated || false;
   const logout = auth?.logout || (() => {});
   const totalItems = cart?.totalItems || 0;
 
-  // ========== СОСТОЯНИЯ ==========
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeMenu, setActiveMenu] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const navigate = useNavigate();
 
-  // ========== ЗАГРУЗКА КАТЕГОРИЙ ==========
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -56,7 +38,6 @@ function Header() {
     fetchCategories();
   }, []);
 
-  // ========== ОБРАБОТЧИКИ ==========
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -68,7 +49,6 @@ function Header() {
 
   const handleCategoryClick = (slug) => {
     navigate(`/products?category=${slug}`);
-    setActiveMenu(null);
     setMobileMenuOpen(false);
   };
 
@@ -81,19 +61,13 @@ function Header() {
     navigate('/');
   };
 
-  // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
   const renderSubMenu = (items, level = 0) => {
     if (!items || items.length === 0) return null;
     
     return (
       <ul className={`submenu level-${level}`}>
         {items.map(item => (
-          <li 
-            key={item.id} 
-            className="menu-item"
-            onMouseEnter={() => setActiveMenu(item.id)}
-            onMouseLeave={() => setActiveMenu(null)}
-          >
+          <li key={item.id} className="menu-item">
             <Link 
               to={`/products?category=${item.slug}`}
               onClick={() => handleCategoryClick(item.slug)}
@@ -114,7 +88,6 @@ function Header() {
     );
   };
 
-  // ========== РЕНДЕРИНГ ==========
   return (
     <header className="header">
       <div className="header-container">
@@ -138,6 +111,10 @@ function Header() {
         </form>
 
         <div className="user-actions">
+          <Link to="/favorites" className="favorites-link">
+            ❤️ Избранное
+          </Link>
+          
           <Link to="/cart" className="cart-link">
             🛒 Корзина
             {totalItems > 0 && (
@@ -173,12 +150,7 @@ function Header() {
           ) : (
             <ul className="main-menu">
               {categories.map(category => (
-                <li 
-                  key={category.id} 
-                  className="main-menu-item"
-                  onMouseEnter={() => setActiveMenu(category.id)}
-                  onMouseLeave={() => setActiveMenu(null)}
-                >
+                <li key={category.id} className="main-menu-item">
                   <Link 
                     to={`/products?category=${category.slug}`}
                     className="main-menu-link"
@@ -248,6 +220,9 @@ function Header() {
         </div>
 
         <div className="mobile-user-actions">
+          <Link to="/favorites" onClick={() => setMobileMenuOpen(false)}>
+            ❤️ Избранное
+          </Link>
           <Link to="/cart" onClick={() => setMobileMenuOpen(false)}>
             🛒 Корзина
           </Link>
@@ -256,7 +231,7 @@ function Header() {
               <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
                 👤 Профиль
               </Link>
-              <Link to="/orders" className="orders-link">📦 Заказы</Link>
+              <Link to="/orders">📦 Заказы</Link>
               <button onClick={handleLogout} className="mobile-logout-btn">
                 Выйти
               </button>

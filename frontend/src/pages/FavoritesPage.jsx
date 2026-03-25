@@ -1,4 +1,3 @@
-// frontend/src/pages/FavoritesPage.jsx
 import React, { useEffect } from 'react';
 import { Link } from 'react-router';
 import { useFavorites } from '../contexts/FavoritesContext';
@@ -8,14 +7,14 @@ import AddToCartButton from '../components/AddToCartButton';
 import './FavoritesPage.css';
 
 function FavoritesPage() {
-  const { favorites, loading, refreshFavorites } = useFavorites();
+  const { favorites, loading, error, refreshFavorites } = useFavorites();
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated) {
       refreshFavorites();
     }
-  }, [isAuthenticated, refreshFavorites]);
+  }, [isAuthenticated]);
 
   if (!isAuthenticated) {
     return (
@@ -39,7 +38,17 @@ function FavoritesPage() {
     );
   }
 
-  if (favorites.length === 0) {
+  if (error) {
+    return (
+      <div className="favorites-error">
+        <h2>Ошибка загрузки</h2>
+        <p>{error}</p>
+        <button onClick={refreshFavorites}>Попробовать снова</button>
+      </div>
+    );
+  }
+
+  if (!favorites || favorites.length === 0) {
     return (
       <div className="favorites-empty">
         <h2>Ваш список желаний пуст</h2>
