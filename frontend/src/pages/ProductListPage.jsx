@@ -1,136 +1,101 @@
-import React, { useState, useEffect } from 'react';  // хуки для состояния и эффектов
-import ProductCard from '../components/ProductCard';  // наш компонент карточки
-import { productsApi } from '../services/products';    // API для запросов к бэкенду
-import './ProductListPage.css';  // стили для страницы (создадим позже)
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router';
+import ProductCard from '../components/ProductCard';
+import { productsApi } from '../services/products';
+import './ProductListPage.css';
 
 function ProductListPage() {
   // ========== СОСТОЯНИЯ (STATE) ==========
-  // Состояние для списка товаров (изначально пустой массив)
   const [products, setProducts] = useState([]);
-  
-  // Состояние для индикатора загрузки (показываем спиннер)
   const [loading, setLoading] = useState(true);
-  
-  // Состояние для ошибки (если запрос не удался)
   const [error, setError] = useState(null);
-  
-  // Состояние для пагинации (какая страница сейчас)
   const [currentPage, setCurrentPage] = useState(1);
-  
-  // Состояние для общего количества товаров (для пагинации)
   const [totalProducts, setTotalProducts] = useState(0);
+  const [pageInput, setPageInput] = useState('');
   
-  // Состояние для фильтра по категории
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  
-  // Состояние для поискового запроса
-  const [searchQuery, setSearchQuery] = useState('');
+  // Получаем параметры из URL
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search') || '';
+  const categorySlug = searchParams.get('category') || null;
 
-  // Количество товаров на странице
   const ITEMS_PER_PAGE = 12;
+  const maxPageButtons = 5; // Количество отображаемых кнопок страниц
 
   // ========== ЗАГРУЗКА ДАННЫХ ==========
-  // useEffect выполняет код при монтировании компонента
-  // и при изменении зависимостей [currentPage, selectedCategory, searchQuery]
   useEffect(() => {
-    // Функция для загрузки товаров (объявляем внутри useEffect)
     const fetchProducts = async () => {
       try {
-        // Показываем индикатор загрузки
         setLoading(true);
-        
-        // Очищаем предыдущую ошибку
         setError(null);
         
-        // Вычисляем offset для пагинации (сколько записей пропустить)
         const skip = (currentPage - 1) * ITEMS_PER_PAGE;
         
-        // Формируем параметры запроса
         const params = {
           skip: skip,
           limit: ITEMS_PER_PAGE,
-          ...(selectedCategory && { category_id: selectedCategory }), // если выбрана категория
-        //   ...(searchQuery && { search: searchQuery }) // если есть поиск
+          ...(searchQuery && { search: searchQuery }),
+          ...(categorySlug && { category_slug: categorySlug }),
         };
         
-        // Отправляем запрос к бэкенду через наш API-клиент
-        // Ждем ответ с помощью await (поэтому функция async)
         const response = await productsApi.getAll(params);
         
-        // Сохраняем полученные товары в состояние
-        setProducts(response.data.items || response.data); // зависит от формата ответа
+        setProducts(response.data.items || response.data);
         
-        // Если бэкенд возвращает общее количество, сохраняем его
-        if (response.data.total) {
+        if (response.data.total !== undefined) {
           setTotalProducts(response.data.total);
         }
         
       } catch (err) {
-        // Если произошла ошибка, сохраняем её в состояние
         setError(err.response?.data?.detail || err.message || 'Ошибка при загрузке товаров');
         console.error('Error fetching products:', err);
       } finally {
-        // В любом случае (успех или ошибка) выключаем индикатор загрузки
         setLoading(false);
       }
     };
 
-    // Вызываем функцию загрузки
     fetchProducts();
+  }, [currentPage, searchQuery, categorySlug]);
+
+  const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE) || 1;
+
+  // ========== НАВИГАЦИЯ ==========
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      setPageInput('');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handlePageInputSubmit = (e) => {
+    e.preventDefault();
+    const page = parseInt(pageInput, 10);
+    if (page >= 1 && page <= totalPages) {
+      goToPage(page);
+    } else {
+      setPageInput('');
+    }
+  };
+
+  // ========== ГЕНЕРАЦИЯ КНОПОК СТРАНИЦ ==========
+  const getPageNumbers = () => {
+    const pages = [];
+    let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
+    let endPage = startPage + maxPageButtons - 1;
     
-  }, [currentPage, selectedCategory, searchQuery]); 
-  // 👆 Эффект перезапустится при изменении этих значений
-
-  // ========== ОБРАБОТЧИКИ СОБЫТИЙ ==========
-  
-  // Добавление товара в корзину
-  const handleAddToCart = (product) => {
-    console.log('Adding to cart:', product);
-    // TODO: реализовать добавление в корзину через API
-    alert(`Товар "${product.name}" добавлен в корзину!`);
-  };
-
-  // Переход на следующую страницу
-  const handleNextPage = () => {
-    const maxPage = Math.ceil(totalProducts / ITEMS_PER_PAGE);
-    if (currentPage < maxPage) {
-      setCurrentPage(currentPage + 1);
-      // Прокрутка вверх страницы
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (endPage > totalPages) {
+      endPage = totalPages;
+      startPage = Math.max(1, endPage - maxPageButtons + 1);
     }
-  };
-
-  // Переход на предыдущую страницу
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
     }
-  };
-
-  // Изменение категории
-  const handleCategoryChange = (categoryId) => {
-    setSelectedCategory(categoryId);
-    setCurrentPage(1); // сбрасываем на первую страницу при смене фильтра
-  };
-
-  // Поиск
-  const handleSearch = (event) => {
-    event.preventDefault();
-    // searchQuery уже обновляется через onChange инпута
-    setCurrentPage(1); // сбрасываем на первую страницу
-  };
-
-  // Сброс всех фильтров
-  const handleResetFilters = () => {
-    setSelectedCategory(null);
-    setSearchQuery('');
-    setCurrentPage(1);
+    
+    return pages;
   };
 
   // ========== УСЛОВНЫЙ РЕНДЕРИНГ ==========
-  
-  // Если идет загрузка - показываем спиннер
   if (loading) {
     return (
       <div className="loading-container">
@@ -140,7 +105,6 @@ function ProductListPage() {
     );
   }
 
-  // Если произошла ошибка - показываем сообщение об ошибке
   if (error) {
     return (
       <div className="error-container">
@@ -156,109 +120,107 @@ function ProductListPage() {
   // ========== ОСНОВНОЙ РЕНДЕРИНГ ==========
   return (
     <div className="product-list-page">
-      {/* Заголовок страницы */}
-      {/* <h1 className="page-title">Все товары</h1> */}
-      
-      {/* Секция фильтров */}
-      <div className="filters-section">
-        {/* Поиск */}
-        <form onSubmit={handleSearch} className="search-form">
-          <input
-            type="text"
-            placeholder="Поиск товаров..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
-          />
-          <button type="submit" className="search-button">
-            Найти
-          </button>
-        </form>
-
-        {/* Фильтр по категориям (пример) */}
-        <div className="category-filters">
-          <button 
-            className={!selectedCategory ? 'active' : ''}
-            onClick={() => handleCategoryChange(null)}
-          >
-            Все
-          </button>
-          <button 
-            className={selectedCategory === 1 ? 'active' : ''}
-            onClick={() => handleCategoryChange(1)}
-          >
-            Электроника
-          </button>
-          <button 
-            className={selectedCategory === 2 ? 'active' : ''}
-            onClick={() => handleCategoryChange(2)}
-          >
-            Одежда
-          </button>
-          <button 
-            className={selectedCategory === 3 ? 'active' : ''}
-            onClick={() => handleCategoryChange(3)}
-          >
-            Книги
-          </button>
-        </div>
-
-        {/* Кнопка сброса фильтров */}
-        {(selectedCategory || searchQuery) && (
-          <button onClick={handleResetFilters} className="reset-filters">
-            Сбросить фильтры
-          </button>
+      <div className="products-info">
+        <p>Найдено товаров: {totalProducts || products.length}</p>
+        {(searchQuery || categorySlug) && (
+          <p className="search-info">
+            {searchQuery && `По запросу: "${searchQuery}"`}
+            {categorySlug && `Категория: ${categorySlug}`}
+          </p>
         )}
       </div>
 
-      {/* Информация о количестве товаров */}
-      <div className="products-info">
-        <p>Найдено товаров: {totalProducts || products.length}</p>
-      </div>
-
-      {/* Сетка с товарами */}
       {products.length === 0 ? (
-        // Если товаров нет
         <div className="no-products">
           <p>Товары не найдены</p>
-          <button onClick={handleResetFilters}>Сбросить фильтры</button>
+          {(searchQuery || categorySlug) && (
+            <p>Попробуйте изменить параметры поиска</p>
+          )}
         </div>
       ) : (
-        // Если товары есть - отображаем их в сетке
         <>
           <div className="products-grid">
             {products.map(product => (
               <ProductCard
                 key={product.id}
                 product={product}
-                onAddToCart={handleAddToCart}
               />
             ))}
           </div>
 
-          {/* Пагинация (если общее количество известно) */}
-          {totalProducts > 0 && (
+          {totalPages > 1 && (
             <div className="pagination">
+              {/* Кнопка "В начало" */}
               <button
-                onClick={handlePrevPage}
+                onClick={() => goToPage(1)}
+                disabled={currentPage === 1}
+                className="pagination-button pagination-first"
+                title="Первая страница"
+              >
+                ««
+              </button>
+              
+              {/* Кнопка "Назад" */}
+              <button
+                onClick={() => goToPage(currentPage - 1)}
                 disabled={currentPage === 1}
                 className="pagination-button"
               >
-                ← Предыдущая
+                «
               </button>
               
-              <span className="page-info">
-                Страница {currentPage} из {Math.ceil(totalProducts / ITEMS_PER_PAGE)}
-              </span>
+              {/* Кнопки страниц */}
+              {getPageNumbers().map(page => (
+                <button
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  className={`pagination-button ${currentPage === page ? 'active' : ''}`}
+                >
+                  {page}
+                </button>
+              ))}
               
+              {/* Кнопка "Вперед" */}
               <button
-                onClick={handleNextPage}
-                disabled={currentPage >= Math.ceil(totalProducts / ITEMS_PER_PAGE)}
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
                 className="pagination-button"
               >
-                Следующая →
+                »
               </button>
+              
+              {/* Кнопка "В конец" */}
+              <button
+                onClick={() => goToPage(totalPages)}
+                disabled={currentPage === totalPages}
+                className="pagination-button pagination-last"
+                title="Последняя страница"
+              >
+                »»
+              </button>
+              
+              {/* Переход на конкретную страницу */}
+              <form onSubmit={handlePageInputSubmit} className="page-input-form">
+                <input
+                  type="number"
+                  min="1"
+                  max={totalPages}
+                  value={pageInput}
+                  onChange={(e) => setPageInput(e.target.value)}
+                  placeholder="..."
+                  className="page-input"
+                />
+                <button type="submit" className="page-input-button">
+                  →
+                </button>
+              </form>
             </div>
+          )}
+          
+          {totalPages > 1 && (
+            <p className="page-info">
+              Страница {currentPage} из {totalPages}
+            </p>
           )}
         </>
       )}

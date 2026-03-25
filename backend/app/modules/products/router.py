@@ -8,18 +8,45 @@ from app.modules.products.models import Product, Category
 
 product_router = APIRouter(prefix="/products", tags=["Products"])
 
-@product_router.get("/", response_model=list[schemas.ProductRead])
+@product_router.get("/", response_model=schemas.ProductListResponse)
 def get_products(db: Session = Depends(get_db),
                  category_id: Optional[int] = None,
+                 category_slug: Optional[str] = None,
+                 search: Optional[str] = None,
                  skip: int = Query(0, ge=0),
                  limit: int = Query(100, ge=1, le=100)
 ):
     query = db.query(Product)
+    
+    # Фильтрация по category_id
     if category_id:
         query = query.filter(Product.category_id == category_id)
-    products = query.offset(skip).limit(limit).all()
+    
+    # Фильтрация по slug категории
+    if category_slug:
+        category = db.query(Category).filter(Category.slug == category_slug).first()
+        if category:
+            # Получаем все ID категории и её дочерних категорий
+            category_ids = [category.id]
+            child_categories = db.query(Category).filter(Category.parent_id == category.id).all()
+            category_ids.extend([c.id for c in child_categories])
+            query = query.filter(Product.category_id.in_(category_ids))
+    
+    # Поиск по названию и описанию
+    if search:
+        search_pattern = f"%{search}%"
+        query = query.filter(
+            (Product.name.ilike(search_pattern)) | 
+            (Product.description.ilike(search_pattern))
+        )
+    
+    # Получаем общее количество
+    total = query.count()
+    
+    # Применяем пагинацию
+    products = query.order_by(Product.id.desc()).offset(skip).limit(limit).all()
 
-    return products
+    return schemas.ProductListResponse(items=products, total=total)
 
 
 @product_router.get("/{slug}", response_model=schemas.ProductRead)

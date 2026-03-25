@@ -1,47 +1,55 @@
-from pydantic import BaseModel, ConfigDict, Field
-from typing import Optional, List
-from datetime import datetime
+from pydantic import BaseModel
+from typing import List, Optional
+
 
 class ProductBase(BaseModel):
-    name: str = Field(..., min_length=3, max_length=200)
-    slug: str = Field(..., min_length=3, max_length=200)
+    name: str
     description: Optional[str] = None
-    price: float = Field(..., gt=0)
-    stock: int = Field(default=0, ge=0)
-    is_active: bool = True
-    category_id: Optional[int] = None
-    image: Optional[str] = Field(None, max_length=500)
+    price: float
+    image: Optional[str] = None
+
 
 class ProductCreate(ProductBase):
-    pass
+    category_id: int
+    slug: str
 
-class ProductUpdate(BaseModel):
-    name: Optional[str] = Field(None, min_length=3, max_length=200)
-    slug: Optional[str] = Field(None, min_length=3, max_length=200)
-    description: Optional[str] = None
-    price: Optional[float] = Field(None, gt=0)
-    stock: Optional[int] = Field(None, ge=0)
-    is_active: Optional[bool] = None
-    category_id: Optional[int] = None
-    image: Optional[str] = Field(None, max_length=500)
 
 class ProductRead(ProductBase):
     id: int
-    created_at: datetime
-    updated_at: Optional[datetime] = None
+    slug: str
+    category_id: int
     
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        from_attributes = True
+
+
+class ProductListResponse(BaseModel):
+    items: List[ProductRead]
+    total: int
+
 
 class CategoryBase(BaseModel):
     name: str
     slug: str
-    description: Optional[str] = None
+
+
+class CategoryCreate(CategoryBase):
     parent_id: Optional[int] = None
+
 
 class CategoryRead(CategoryBase):
     id: int
+    parent_id: Optional[int] = None
     
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        from_attributes = True
+
 
 class CategoryWithChildren(CategoryRead):
-    children: List["CategoryRead"] = []  # вложенные подкатегории
+    children: List["CategoryWithChildren"] = []
+    
+    class Config:
+        from_attributes = True
+
+
+CategoryWithChildren.model_rebuild()
