@@ -45,6 +45,11 @@
   color: inherit;
 }
 
+.product-image-link {
+  display: block;
+  overflow: hidden;
+}
+
 /* ========== PRODUCT IMAGE ========== */
 .product-image {
   width: 100%;
@@ -69,7 +74,7 @@
 }
 
 /* ========== PRODUCT INFO ========== */
-.product-card-info {
+.product-info {
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
@@ -87,9 +92,10 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   transition: color var(--transition-fast);
+  text-decoration: none;
 }
 
-.product-link:hover .product-title {
+.product-title:hover {
   color: var(--accent-light);
 }
 
@@ -111,6 +117,11 @@
   border-radius: 2px;
 }
 
+/* ========== PRODUCT ACTIONS ========== */
+.product-actions {
+  margin-top: auto;
+}
+
 /* ========== ADD TO CART BUTTON ========== */
 .add-to-cart-btn {
   width: 100%;
@@ -123,7 +134,6 @@
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition-bounce);
-  margin-top: auto;
   position: relative;
   overflow: hidden;
 }
@@ -168,29 +178,6 @@
   display: none;
 }
 
-/* ========== QUICK VIEW HOVER EFFECT ========== */
-.product-card::after {
-  content: 'Быстрый просмотр';
-  position: absolute;
-  bottom: -50px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--accent-primary);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
-  font-weight: 500;
-  opacity: 0;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.product-card:hover::after {
-  bottom: 80px;
-  opacity: 1;
-}
-
 /* ========== STOCK INDICATOR ========== */
 .product-stock {
   display: flex;
@@ -226,7 +213,7 @@
     height: 180px;
   }
   
-  .product-card-info {
+  .product-info {
     padding: 1rem;
   }
   
@@ -241,10 +228,6 @@
   .add-to-cart-btn {
     padding: 0.75rem 1rem;
     font-size: 0.85rem;
-  }
-  
-  .product-card::after {
-    display: none;
   }
 }
 

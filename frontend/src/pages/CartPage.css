@@ -226,7 +226,7 @@
 /* ========== CHECKOUT BUTTON ========== */
 .checkout-btn {
   width: 100%;
-  padding: 1rem 1.5rem;
+  padding: 0.875rem 1.5rem;
   background: var(--accent-gradient);
   color: white;
   border: none;
@@ -236,23 +236,27 @@
   cursor: pointer;
   transition: var(--transition-bounce);
   margin-top: 1.5rem;
+  display: block;
+  text-align: center;
+  text-decoration: none;
 }
 
 .checkout-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 20px rgba(123, 44, 191, 0.4);
+  color: white;
 }
 
 /* ========== CLEAR CART BUTTON ========== */
 .clear-cart-btn {
   width: 100%;
-  padding: 0.75rem 1.25rem;
+  padding: 0.875rem 1.5rem;
   background: transparent;
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: var(--radius-md);
   color: var(--error);
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
   transition: var(--transition-bounce);
   margin-top: 0.75rem;

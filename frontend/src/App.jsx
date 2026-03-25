@@ -4,7 +4,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import ProductListPage from './pages/ProductListPage';
 import ProductDetail from './pages/ProductDetail';
 import NotFound from './pages/NotFound';
-import ProductDetailPage from './pages/ProductDetailPage'
+import ProductDetailPage from './pages/ProductDetailPage';
 import Header from './components/Header';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -15,6 +15,7 @@ import { OrdersProvider } from './contexts/OrdersContext';
 import CheckoutPage from './pages/CheckoutPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailPage from './pages/OrderDetailPage';
+import CartPage from './pages/CartPage';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
                   <Route path="/products" element={<ProductListPage />} />
                   <Route path="/product/:id" element={<ProductDetail />} />
                   <Route path="/products/:slug" element={<ProductDetailPage />} />
+                  <Route path="/cart" element={<CartPage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
                   <Route path="/checkout" element={<CheckoutPage />} />
