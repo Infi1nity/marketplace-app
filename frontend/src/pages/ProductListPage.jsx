@@ -5,7 +5,6 @@ import { productsApi } from '../services/products';
 import './ProductListPage.css';
 
 function ProductListPage() {
-  // ========== СОСТОЯНИЯ (STATE) ==========
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,15 +12,13 @@ function ProductListPage() {
   const [totalProducts, setTotalProducts] = useState(0);
   const [pageInput, setPageInput] = useState('');
   
-  // Получаем параметры из URL
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
   const categorySlug = searchParams.get('category') || null;
 
   const ITEMS_PER_PAGE = 12;
-  const maxPageButtons = 5; // Количество отображаемых кнопок страниц
+  const maxPageButtons = 5;
 
-  // ========== ЗАГРУЗКА ДАННЫХ ==========
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -39,15 +36,28 @@ function ProductListPage() {
         
         const response = await productsApi.getAll(params);
         
-        setProducts(response.data.items || response.data);
-        
-        if (response.data.total !== undefined) {
-          setTotalProducts(response.data.total);
+        // Handle different response formats
+        if (response && typeof response === 'object') {
+          if (response.items) {
+            setProducts(response.items);
+            if (response.total !== undefined) {
+              setTotalProducts(response.total);
+            }
+          } else if (Array.isArray(response)) {
+            setProducts(response);
+            setTotalProducts(response.length);
+          } else {
+            console.warn('Unexpected response format:', response);
+            setProducts([]);
+          }
+        } else {
+          setProducts([]);
         }
         
       } catch (err) {
         setError(err.response?.data?.detail || err.message || 'Ошибка при загрузке товаров');
         console.error('Error fetching products:', err);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -58,7 +68,6 @@ function ProductListPage() {
 
   const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE) || 1;
 
-  // ========== НАВИГАЦИЯ ==========
   const goToPage = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
@@ -77,7 +86,6 @@ function ProductListPage() {
     }
   };
 
-  // ========== ГЕНЕРАЦИЯ КНОПОК СТРАНИЦ ==========
   const getPageNumbers = () => {
     const pages = [];
     let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
@@ -95,29 +103,31 @@ function ProductListPage() {
     return pages;
   };
 
-  // ========== УСЛОВНЫЙ РЕНДЕРИНГ ==========
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-        <p>Загрузка товаров...</p>
+      <div className="product-list-page">
+        <div className="loading-container">
+          <div className="spinner"></div>
+          <p>Загрузка товаров...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="error-container">
-        <h2>Ошибка!</h2>
-        <p>{error}</p>
-        <button onClick={() => window.location.reload()}>
-          Попробовать снова
-        </button>
+      <div className="product-list-page">
+        <div className="error-container">
+          <h2>Ошибка!</h2>
+          <p>{error}</p>
+          <button onClick={() => window.location.reload()}>
+            Попробовать снова
+          </button>
+        </div>
       </div>
     );
   }
 
-  // ========== ОСНОВНОЙ РЕНДЕРИНГ ==========
   return (
     <div className="product-list-page">
       <div className="products-info">
@@ -150,7 +160,6 @@ function ProductListPage() {
 
           {totalPages > 1 && (
             <div className="pagination">
-              {/* Кнопка "В начало" */}
               <button
                 onClick={() => goToPage(1)}
                 disabled={currentPage === 1}
@@ -160,7 +169,6 @@ function ProductListPage() {
                 ««
               </button>
               
-              {/* Кнопка "Назад" */}
               <button
                 onClick={() => goToPage(currentPage - 1)}
                 disabled={currentPage === 1}
@@ -169,7 +177,6 @@ function ProductListPage() {
                 «
               </button>
               
-              {/* Кнопки страниц */}
               {getPageNumbers().map(page => (
                 <button
                   key={page}
@@ -180,7 +187,6 @@ function ProductListPage() {
                 </button>
               ))}
               
-              {/* Кнопка "Вперед" */}
               <button
                 onClick={() => goToPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
@@ -189,7 +195,6 @@ function ProductListPage() {
                 »
               </button>
               
-              {/* Кнопка "В конец" */}
               <button
                 onClick={() => goToPage(totalPages)}
                 disabled={currentPage === totalPages}
@@ -199,7 +204,6 @@ function ProductListPage() {
                 »»
               </button>
               
-              {/* Переход на конкретную страницу */}
               <form onSubmit={handlePageInputSubmit} className="page-input-form">
                 <input
                   type="number"

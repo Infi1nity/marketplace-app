@@ -26,7 +26,18 @@ function Header() {
       try {
         setLoading(true);
         const response = await categoriesApi.getTree();
-        setCategories(response.data);
+        // Handle different response formats
+        if (response && typeof response === 'object') {
+          if (Array.isArray(response)) {
+            setCategories(response);
+          } else if (response.data) {
+            setCategories(response.data);
+          } else {
+            setCategories([]);
+          }
+        } else {
+          setCategories([]);
+        }
       } catch (error) {
         console.error('Ошибка загрузки категорий:', error);
         setCategories([]);
@@ -41,14 +52,14 @@ function Header() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
+      navigate(`/?search=${encodeURIComponent(searchQuery)}`);
       setSearchQuery('');
       setMobileMenuOpen(false);
     }
   };
 
   const handleCategoryClick = (slug) => {
-    navigate(`/products?category=${slug}`);
+    navigate(`/?category=${slug}`);
     setMobileMenuOpen(false);
   };
 
@@ -69,7 +80,7 @@ function Header() {
         {items.map(item => (
           <li key={item.id} className="menu-item">
             <Link 
-              to={`/products?category=${item.slug}`}
+              to={`/?category=${item.slug}`}
               onClick={() => handleCategoryClick(item.slug)}
               className="menu-link"
             >
@@ -93,7 +104,7 @@ function Header() {
       <div className="header-container">
         <div className="logo">
           <Link to="/">
-            <h1>Marketplace</h1>
+            <h1>МАРКЕТПЛЕЙС</h1>
           </Link>
         </div>
 
@@ -112,28 +123,28 @@ function Header() {
 
         <div className="user-actions">
           <Link to="/favorites" className="favorites-link">
-            ❤️ Избранное
+            Избранное
           </Link>
           
           <Link to="/cart" className="cart-link">
-            🛒 Корзина
+            Корзина
             {totalItems > 0 && (
               <span className="cart-badge">{totalItems}</span>
             )}
           </Link>
           
           {isAuthenticated ? (
-            <div className="profile-menu">
+            <>
               <Link to="/profile" className="profile-icon">
-                👤 {user?.username}
+                {user?.username}
               </Link>
               <button onClick={handleLogout} className="logout-btn">
                 Выйти
               </button>
-            </div>
+            </>
           ) : (
             <Link to="/login" className="login-link">
-              👤 Войти
+              Войти
             </Link>
           )}
         </div>
@@ -152,7 +163,7 @@ function Header() {
               {categories.map(category => (
                 <li key={category.id} className="main-menu-item">
                   <Link 
-                    to={`/products?category=${category.slug}`}
+                    to={`/?category=${category.slug}`}
                     className="main-menu-link"
                   >
                     {category.name}
@@ -194,7 +205,7 @@ function Header() {
               {categories.map(category => (
                 <li key={category.id}>
                   <Link 
-                    to={`/products?category=${category.slug}`}
+                    to={`/?category=${category.slug}`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {category.name}
@@ -204,7 +215,7 @@ function Header() {
                       {category.children.map(child => (
                         <li key={child.id}>
                           <Link 
-                            to={`/products?category=${child.slug}`}
+                            to={`/?category=${child.slug}`}
                             onClick={() => setMobileMenuOpen(false)}
                           >
                             {child.name}
@@ -221,24 +232,24 @@ function Header() {
 
         <div className="mobile-user-actions">
           <Link to="/favorites" onClick={() => setMobileMenuOpen(false)}>
-            ❤️ Избранное
+            Избранное
           </Link>
           <Link to="/cart" onClick={() => setMobileMenuOpen(false)}>
-            🛒 Корзина
+            Корзина
           </Link>
           {isAuthenticated ? (
             <>
               <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
-                👤 Профиль
+                Профиль
               </Link>
-              <Link to="/orders">📦 Заказы</Link>
+              <Link to="/orders">Заказы</Link>
               <button onClick={handleLogout} className="mobile-logout-btn">
                 Выйти
               </button>
             </>
           ) : (
             <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-              👤 Войти
+              Войти
             </Link>
           )}
         </div>

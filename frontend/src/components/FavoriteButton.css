@@ -1,132 +1,42 @@
 /* ===================================
-   FAVORITE BUTTON STYLES
-   Dark Purple Theme
+   BRUTALIST FAVORITE BUTTON
    =================================== */
 
+:root {
+  --brutal-black: #000000;
+  --brutal-white: #ffffff;
+  --brutal-pink: #FE90E7;
+  --brutal-yellow: #FEC901;
+  --brutal-red: #ff0000;
+  --brutal-gray: #e0e0e0;
+  --brutal-border: 3px solid var(--brutal-black);
+  --brutal-shadow: 6px 6px 0px var(--brutal-black);
+}
+
 .favorite-btn {
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(8px);
-  border: none;
-  border-radius: 50%;
+  background: var(--brutal-white);
+  border: var(--brutal-border);
+  font-size: 1.5rem;
   cursor: pointer;
-  transition: var(--transition-bounce);
+  transition: all 0.1s ease;
 }
 
 .favorite-btn:hover {
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--brutal-pink);
   transform: scale(1.1);
 }
 
-.favorite-btn:active {
-  transform: scale(0.95);
+.favorite-btn.active {
+  background: var(--brutal-pink);
+  color: var(--brutal-black);
 }
 
-.favorite-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ========== HEART ICON ========== */
-.heart-icon {
-  font-size: 1.25rem;
-  transition: transform 0.2s ease;
-}
-
-.favorite-btn:hover .heart-icon {
-  transform: scale(1.2);
-}
-
-/* Active state - when favorited */
-.favorite-btn.active .heart-icon {
-  animation: heart-pop 0.3s ease;
-}
-
-@keyframes heart-pop {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.3);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* ========== SPINNER ========== */
-.favorite-spinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ========== SIZES ========== */
-
-/* Small size */
-.favorite-btn.small {
-  width: 32px;
-  height: 32px;
-}
-
-.favorite-btn.small .heart-icon {
-  font-size: 1rem;
-}
-
-/* Large size */
-.favorite-btn.large {
-  width: 48px;
-  height: 48px;
-}
-
-.favorite-btn.large .heart-icon {
-  font-size: 1.5rem;
-}
-
-/* ========== COMPACT VERSION (for cards) ========== */
-.favorite-btn.compact {
-  width: 32px;
-  height: 32px;
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.favorite-btn.compact .heart-icon {
-  font-size: 1rem;
-}
-
-/* ========== RESPONSIVE ========== */
-@media (max-width: 768px) {
-  .favorite-btn {
-    width: 36px;
-    height: 36px;
-  }
-  
-  .heart-icon {
-    font-size: 1.1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .favorite-btn {
-    width: 32px;
-    height: 32px;
-  }
-  
-  .heart-icon {
-    font-size: 1rem;
-  }
+.favorite-btn svg {
+  width: 24px;
+  height: 24px;
 }

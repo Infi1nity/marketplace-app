@@ -1,29 +1,20 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router';
 import { useFavorites } from '../contexts/FavoritesContext';
+import { Link } from 'react-router';
 import { useAuth } from '../contexts/AuthContext';
-import FavoriteButton from '../components/FavoriteButton';
 import AddToCartButton from '../components/AddToCartButton';
 import './FavoritesPage.css';
 
 function FavoritesPage() {
-  const { favorites, loading, error, refreshFavorites } = useFavorites();
+  const { favorites, loading, toggleFavorite, isFavorite } = useFavorites();
   const { isAuthenticated } = useAuth();
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      refreshFavorites();
-    }
-  }, [isAuthenticated]);
 
   if (!isAuthenticated) {
     return (
-      <div className="favorites-auth-required">
-        <h2>Войдите в аккаунт</h2>
-        <p>Чтобы просмотреть избранное, войдите или зарегистрируйтесь</p>
-        <div className="auth-buttons">
-          <Link to="/login" className="login-btn">Войти</Link>
-          <Link to="/register" className="register-btn">Зарегистрироваться</Link>
+      <div className="favorites-page">
+        <div className="favorites-empty">
+          <h2>Войдите в аккаунт</h2>
+          <p>Добавляйте товары в избранное</p>
+          <Link to="/login" className="browse-btn">ВОЙТИ</Link>
         </div>
       </div>
     );
@@ -31,66 +22,72 @@ function FavoritesPage() {
 
   if (loading) {
     return (
-      <div className="favorites-loading">
-        <div className="spinner"></div>
-        <p>Загрузка избранного...</p>
+      <div className="favorites-page">
+        <div className="brutal-loading">
+          <div className="brutal-loading-spinner"></div>
+          <p>ЗАГРУЗКА...</p>
+        </div>
       </div>
     );
   }
 
-  if (error) {
+  if (favorites.length === 0) {
     return (
-      <div className="favorites-error">
-        <h2>Ошибка загрузки</h2>
-        <p>{error}</p>
-        <button onClick={refreshFavorites}>Попробовать снова</button>
-      </div>
-    );
-  }
-
-  if (!favorites || favorites.length === 0) {
-    return (
-      <div className="favorites-empty">
-        <h2>Ваш список желаний пуст</h2>
-        <p>Добавляйте товары в избранное, чтобы не потерять их</p>
-        <Link to="/products" className="continue-shopping-btn">
-          Перейти к товарам
-        </Link>
+      <div className="favorites-page">
+        <div className="favorites-header">
+          <h1>Избранное</h1>
+        </div>
+        <div className="favorites-empty">
+          <h2>Избранное пусто</h2>
+          <p>Добавьте товары в избранное</p>
+          <Link to="/" className="browse-btn">Перейти к товарам</Link>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="favorites-page">
-      <h1>Избранное ({favorites.length})</h1>
-
+      <div className="favorites-header">
+        <h1>Избранное</h1>
+        <p className="favorites-count">Товаров: {favorites.length}</p>
+      </div>
+      
       <div className="favorites-grid">
-        {favorites.map(favorite => {
-          const product = favorite.product;
-          if (!product) return null;
-
+        {favorites.map(fav => {
+          const product = fav.product || fav;
+          const productId = fav.product_id || product?.id;
+          
           return (
-            <div key={favorite.id} className="favorite-card">
-              <div className="favorite-card-header">
-                <FavoriteButton product={product} />
+            <div key={productId} className="product-card">
+              <div className="product-card-header">
+                <button
+                  className={`favorite-btn ${isFavorite(productId) ? 'active' : ''}`}
+                  onClick={() => toggleFavorite(productId)}
+                  title={isFavorite(productId) ? 'Удалить из избранного' : 'В избранное'}
+                >
+                  {isFavorite(productId) ? '★' : '☆'}
+                </button>
               </div>
               
-              <Link to={`/products/${product.slug}`} className="favorite-card-image">
-                {product.image ? (
-                  <img src={product.image} alt={product.name} />
+              <Link to={`/product/${productId}`} className="product-image-link">
+                {product?.image ? (
+                  <img src={product.image} alt={product?.name || 'Товар'} className="product-image" />
                 ) : (
-                  <div className="no-image">Нет фото</div>
+                  <div className="product-image-placeholder">НЕТ ФОТО</div>
                 )}
               </Link>
               
-              <div className="favorite-card-info">
-                <Link to={`/products/${product.slug}`} className="product-name">
-                  {product.name}
+              <div className="product-info">
+                <Link to={`/product/${productId}`} className="product-title">
+                  {product?.name || 'Товар'}
                 </Link>
-                <div className="product-price">
-                  {product.price?.toLocaleString('ru-RU')} ₽
+                <p className="product-price">
+                  {product?.price ? `${product.price.toLocaleString('ru-RU')} ₽` : 'Цена не указана'}
+                </p>
+                <div className="product-actions">
+                  <AddToCartButton product={product} />
                 </div>
-                <AddToCartButton product={product} className="compact-btn" />
               </div>
             </div>
           );

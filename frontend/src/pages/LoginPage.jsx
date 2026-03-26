@@ -60,7 +60,7 @@ function LoginPage() {
       const result = await login(formData.email, formData.password);
       
       if (result.success) {
-        navigate('/products');
+        navigate('/');
       } else {
         setServerError(result.error || 'Ошибка входа');
       }
@@ -73,15 +73,16 @@ function LoginPage() {
 
   return (
     <div className="auth-page">
-      <div className="auth-container">
+      <div className="auth-card">
         <div className="auth-header">
-          <h2>Вход в аккаунт</h2>
-          <p>Добро пожаловать! Войдите, чтобы продолжить</p>
+          <div className="auth-icon">👤</div>
+          <h1>Вход в аккаунт</h1>
+          <p>Войдите, чтобы продолжить покупки</p>
         </div>
 
         {serverError && (
           <div className="auth-error">
-            {serverError}
+            ⚠️ {serverError}
           </div>
         )}
 
@@ -99,7 +100,7 @@ function LoginPage() {
               disabled={isLoading}
             />
             {errors.email && (
-              <span className="error-message">{errors.email}</span>
+              <span className="field-error">{errors.email}</span>
             )}
           </div>
 
@@ -116,14 +117,11 @@ function LoginPage() {
               disabled={isLoading}
             />
             {errors.password && (
-              <span className="error-message">{errors.password}</span>
+              <span className="field-error">{errors.password}</span>
             )}
           </div>
 
           <div className="form-options">
-            <label className="remember-me">
-              <input type="checkbox" /> Запомнить меня
-            </label>
             <Link to="/forgot-password" className="forgot-link">
               Забыли пароль?
             </Link>
@@ -131,20 +129,18 @@ function LoginPage() {
 
           <button 
             type="submit" 
-            className="auth-button"
+            className="auth-btn"
             disabled={isLoading}
           >
-            {isLoading ? 'Вход...' : 'Войти'}
+            {isLoading ? 'Вход...' : 'ВОЙТИ →'}
           </button>
         </form>
 
         <div className="auth-footer">
-          <p>
-            Нет аккаунта?{' '}
-            <Link to="/register" className="auth-link">
-              Зарегистрироваться
-            </Link>
-          </p>
+          <p>Нет аккаунта?</p>
+          <Link to="/register" className="auth-link">
+            ЗАРЕГИСТРИРОВАТЬСЯ →
+          </Link>
         </div>
       </div>
     </div>

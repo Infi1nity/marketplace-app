@@ -1,13 +1,241 @@
 /* ===================================
-   REGISTER PAGE STYLES
-   Uses LoginPage.css styles
-   Dark Purple Theme
+   BRUTALIST REGISTER PAGE STYLES
    =================================== */
 
-/* 
-   Register page uses the same styles as Login page.
-   Import LoginPage.css for shared auth styles:
-   @import './LoginPage.css';
-*/
+:root {
+  --brutal-black: #000000;
+  --brutal-white: #ffffff;
+  --brutal-pink: #FE90E7;
+  --brutal-yellow: #FEC901;
+  --brutal-red: #ff0000;
+  --brutal-gray: #e0e0e0;
+  --brutal-border: 3px solid var(--brutal-black);
+  --brutal-border-thick: 5px solid var(--brutal-black);
+  --brutal-shadow: 6px 6px 0px var(--brutal-black);
+  --brutal-shadow-hover: 8px 8px 0px var(--brutal-black);
+}
 
-/* Additional register-specific styles can be added here if needed */
+.auth-page {
+  min-height: calc(100vh - 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  background: var(--brutal-gray);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 500px;
+  background: var(--brutal-white);
+  border: var(--brutal-border-thick);
+}
+
+.register-header {
+  background: var(--brutal-yellow);
+}
+
+.auth-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.auth-header h1 {
+  font-family: 'Arial Black', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--brutal-black);
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+.auth-header p {
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: var(--brutal-black);
+  margin: 0;
+  opacity: 0.8;
+  text-transform: uppercase;
+}
+
+.auth-form {
+  padding: 2rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  font-family: 'Arial Black', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: var(--brutal-black);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  background: var(--brutal-white);
+  border: var(--brutal-border);
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  color: var(--brutal-black);
+  transition: all 0.1s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--brutal-black);
+  box-shadow: var(--brutal-shadow);
+  background: #f5f5f5;
+}
+
+.form-group input::placeholder {
+  color: var(--brutal-black);
+  opacity: 0.4;
+}
+
+.form-group input.error {
+  border-color: var(--brutal-red);
+  background: #fff5f5;
+}
+
+.field-error {
+  display: block;
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--brutal-red);
+  margin-top: 0.4rem;
+  text-transform: uppercase;
+}
+
+.auth-error {
+  background: var(--brutal-red);
+  color: var(--brutal-white);
+  padding: 1rem 2rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-bottom: var(--brutal-border);
+  text-align: center;
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 1.1rem;
+  background: var(--brutal-black);
+  border: var(--brutal-border);
+  font-family: 'Arial Black', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--brutal-white);
+  cursor: pointer;
+  transition: all 0.1s ease;
+  margin-top: 0.5rem;
+}
+
+.auth-btn:hover:not(:disabled) {
+  background: var(--brutal-yellow);
+  color: var(--brutal-black);
+  transform: translate(-3px, -3px);
+  box-shadow: var(--brutal-shadow);
+}
+
+.auth-btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.auth-btn:disabled {
+  background: var(--brutal-gray);
+  color: var(--brutal-black);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-footer {
+  padding: 1.5rem 2rem;
+  background: var(--brutal-gray);
+  border-top: var(--brutal-border);
+  text-align: center;
+}
+
+.auth-footer p {
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: var(--brutal-black);
+  margin: 0 0 0.75rem;
+  opacity: 0.7;
+  text-transform: uppercase;
+}
+
+.auth-link {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: var(--brutal-white);
+  border: var(--brutal-border);
+  font-family: 'Arial Black', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--brutal-black);
+  text-decoration: none;
+  transition: all 0.1s ease;
+}
+
+.auth-link:hover {
+  background: var(--brutal-pink);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--brutal-black);
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  
+  .auth-form {
+    padding: 1.5rem;
+  }
+  
+  .auth-header,
+  .auth-footer {
+    padding: 1.5rem;
+  }
+  
+  .auth-card {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-page {
+    padding: 1rem;
+    min-height: calc(100vh - 150px);
+  }
+  
+  .auth-icon {
+    font-size: 2.5rem;
+  }
+  
+  .auth-header h1 {
+    font-size: 1.25rem;
+  }
+}

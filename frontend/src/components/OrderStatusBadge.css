@@ -1,78 +1,49 @@
 /* ===================================
-   ORDER STATUS BADGE STYLES
-   Dark Purple Theme
+   BRUTALIST ORDER STATUS BADGE
    =================================== */
+
+:root {
+  --brutal-black: #000000;
+  --brutal-white: #ffffff;
+  --brutal-pink: #FE90E7;
+  --brutal-yellow: #FEC901;
+  --brutal-red: #ff0000;
+  --brutal-gray: #e0e0e0;
+  --brutal-border: 3px solid var(--brutal-black);
+}
 
 .order-status-badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.35rem 0.85rem;
+  padding: 0.5rem 1rem;
+  font-family: 'Arial Black', sans-serif;
   font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: 100px;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-  transition: var(--transition-bounce);
+  border: var(--brutal-border);
 }
 
-.order-status-badge:hover {
-  transform: scale(1.02);
+.order-status-badge.pending {
+  background: var(--brutal-yellow);
+  color: var(--brutal-black);
 }
 
-/* ========== STATUS VARIATIONS ========== */
-
-/* Pending - Ожидает обработки */
-.order-status-badge[style*="f39c12"],
-.status-pending {
-  background: rgba(243, 156, 18, 0.15) !important;
-  color: #f39c12 !important;
-  border: 1px solid rgba(243, 156, 18, 0.3);
+.order-status-badge.processing {
+  background: var(--brutal-pink);
+  color: var(--brutal-black);
 }
 
-/* Processing - В обработке */
-.order-status-badge[style*="3498db"],
-.status-processing {
-  background: rgba(52, 152, 219, 0.15) !important;
-  color: #3498db !important;
-  border: 1px solid rgba(52, 152, 219, 0.3);
+.order-status-badge.shipped {
+  background: var(--brutal-black);
+  color: var(--brutal-white);
 }
 
-/* Shipped - Отправлен */
-.order-status-badge[style*="2ecc71"],
-.status-shipped {
-  background: rgba(46, 204, 113, 0.15) !important;
-  color: #2ecc71 !important;
-  border: 1px solid rgba(46, 204, 113, 0.3);
+.order-status-badge.delivered {
+  background: var(--brutal-black);
+  color: var(--brutal-white);
 }
 
-/* Delivered - Доставлен */
-.order-status-badge[style*="27ae60"],
-.status-delivered {
-  background: rgba(39, 174, 96, 0.15) !important;
-  color: #27ae60 !important;
-  border: 1px solid rgba(39, 174, 96, 0.3);
-}
-
-/* Cancelled - Отменён */
-.order-status-badge[style*="e74c3c"],
-.status-cancelled {
-  background: rgba(231, 76, 60, 0.15) !important;
-  color: #e74c3c !important;
-  border: 1px solid rgba(231, 76, 60, 0.3);
-}
-
-/* ========== RESPONSIVE ========== */
-@media (max-width: 768px) {
-  .order-status-badge {
-    font-size: 0.7rem;
-    padding: 0.3rem 0.75rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .order-status-badge {
-    font-size: 0.65rem;
-    padding: 0.25rem 0.6rem;
-  }
+.order-status-badge.cancelled {
+  background: var(--brutal-red);
+  color: var(--brutal-white);
 }

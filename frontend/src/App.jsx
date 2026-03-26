@@ -1,10 +1,10 @@
 import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router';
 import { AuthProvider } from './contexts/AuthContext';
+import Home from './pages/Home';
 import ProductListPage from './pages/ProductListPage';
 import ProductDetail from './pages/ProductDetail';
 import NotFound from './pages/NotFound';
-import ProductDetailPage from './pages/ProductDetailPage';
 import Header from './components/Header';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -28,19 +28,27 @@ function App() {
               <Header />
               <main className="main-content">
                 <Routes>
-                  {/* Главная страница - показывает все товары */}
-                  <Route path="/" element={<ProductListPage />} />
+                  {/* Главная страница */}
+                  <Route path="/" element={<Home />} />
+                  {/* Каталог товаров */}
                   <Route path="/products" element={<ProductListPage />} />
+                  {/* Страница товара по ID */}
                   <Route path="/product/:id" element={<ProductDetail />} />
-                  <Route path="/products/:slug" element={<ProductDetailPage />} />
+                  {/* Корзина */}
                   <Route path="/cart" element={<CartPage />} />
+                  {/* Профиль */}
                   <Route path="/profile" element={<ProfilePage />} />
+                  {/* Авторизация */}
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
+                  {/* Оформление заказа */}
                   <Route path="/checkout" element={<CheckoutPage />} />
+                  {/* Заказы */}
                   <Route path="/orders" element={<OrdersPage />} />
                   <Route path="/orders/:orderId" element={<OrderDetailPage />} />
+                  {/* Избранное */}
                   <Route path="/favorites" element={<FavoritesPage />} />
+                  {/* 404 */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>

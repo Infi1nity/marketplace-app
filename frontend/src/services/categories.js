@@ -4,7 +4,7 @@ export const categoriesApi = {
   // Получить плоский список всех категорий
   getAll: async (params = {}) => {
     const response = await api.get('/categories', { params });
-    return response;
+    return response.data;
   },
   
   // Получить дерево категорий (с вложенными подкатегориями)

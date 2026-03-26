@@ -1,49 +1,44 @@
-import React from 'react';
-// import PropTypes from 'prop-types';
-import './ProductCard.css';
 import { Link } from 'react-router';
-import FavoriteButton from './FavoriteButton'
-import AddToCartButton from './AddToCartButton'
-
+import { useFavorites } from '../contexts/FavoritesContext';
+import AddToCartButton from './AddToCartButton';
+import './ProductCard.css';
 
 function ProductCard({ product }) {
-  // Функция для обработки ошибок загрузки изображения
-  const handleImageError = (e) => {
-    e.target.src = 'https://picsum.photos/id/20/200/200'; // fallback изображение
-    e.target.onerror = null;
-  };
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   return (
     <div className="product-card">
       <div className="product-card-header">
-        <FavoriteButton product={product} />
+        <button
+          className={`favorite-btn ${isFavorite(product.id) ? 'active' : ''}`}
+          onClick={() => toggleFavorite(product.id)}
+          aria-label={isFavorite(product.id) ? 'Удалить из избранного' : 'Добавить в избранное'}
+        >
+          {isFavorite(product.id) ? '★' : '☆'}
+        </button>
       </div>
       
-      <Link to={`/products/${product.slug}`} className="product-image-link">
+      <Link to={`/product/${product.id}`} className="product-image-link">
         {product.image ? (
           <img 
             src={product.image} 
-            alt={product.name}
+            alt={product.name} 
             className="product-image"
-            onError={handleImageError}
           />
         ) : (
           <div className="product-image-placeholder">
-            <span>📷</span>
-            <span>Нет фото</span>
+            НЕТ ФОТО
           </div>
         )}
       </Link>
       
       <div className="product-info">
-        <Link to={`/products/${product.slug}`} className="product-title">
-          <h3>{product.name}</h3>
+        <Link to={`/product/${product.id}`} className="product-title">
+          {product.name}
         </Link>
-        
-        <div className="product-price">
+        <p className="product-price">
           {product.price.toLocaleString('ru-RU')} ₽
-        </div>
-        
+        </p>
         <div className="product-actions">
           <AddToCartButton product={product} />
         </div>

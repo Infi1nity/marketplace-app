@@ -60,6 +60,16 @@ def get_product(slug: str, db: Session = Depends(get_db)):
     return product
 
 
+@product_router.get("/id/{product_id}", response_model=schemas.ProductRead)
+def get_product_by_id(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
+
+    if not product:
+        raise HTTPException(404, detail=f"Product with id '{product_id}' not found")
+
+    return product
+
+
 
 category_router = APIRouter(prefix='/categories', tags=['Categories'])
 

@@ -1,184 +1,203 @@
 /* ===================================
-   NOT FOUND PAGE STYLES
-   Dark Purple Theme
+   BRUTALIST NOT FOUND PAGE
    =================================== */
 
+:root {
+  --brutal-black: #000000;
+  --brutal-white: #ffffff;
+  --brutal-pink: #FE90E7;
+  --brutal-yellow: #FEC901;
+  --brutal-red: #ff0000;
+  --brutal-gray: #e0e0e0;
+  --brutal-border: 3px solid var(--brutal-black);
+  --brutal-border-thick: 5px solid var(--brutal-black);
+  --brutal-shadow: 6px 6px 0px var(--brutal-black);
+}
+
 .not-found-page {
-  min-height: calc(100vh - 300px);
+  min-height: calc(100vh - 250px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 4rem 2rem;
   text-align: center;
 }
 
-/* ========== ERROR ICON ========== */
+.not-found-content {
+  background: var(--brutal-white);
+  border: var(--brutal-border-thick);
+  padding: 4rem 3rem;
+  max-width: 500px;
+  margin-bottom: 3rem;
+}
+
 .not-found-icon {
-  font-size: 8rem;
-  margin-bottom: 1rem;
-  animation: float 3s ease-in-out infinite;
+  font-size: 5rem;
+  margin-bottom: 1.5rem;
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-/* ========== ERROR CODE ========== */
-.error-code {
-  font-size: 10rem;
-  font-weight: 800;
+.not-found-code {
+  font-family: 'Arial Black', sans-serif;
+  font-size: 7rem;
+  font-weight: 900;
+  color: var(--brutal-black);
   line-height: 1;
-  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-light) 50%, var(--accent-hover) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 1rem;
-  text-shadow: 0 0 40px rgba(123, 44, 191, 0.3);
+  margin: 0 0 1rem;
+  letter-spacing: -4px;
 }
 
-/* ========== TITLE ========== */
+.not-found-code::before {
+  content: '//';
+  margin-right: 0.5rem;
+  color: var(--brutal-pink);
+}
+
 .not-found-title {
-  font-size: 2rem;
-  color: var(--text-primary);
-  margin-bottom: 0.75rem;
+  font-family: 'Arial Black', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--brutal-black);
+  text-transform: uppercase;
+  margin: 0 0 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: var(--brutal-border);
 }
 
-/* ========== DESCRIPTION ========== */
-.not-found-description {
-  font-size: 1.1rem;
-  color: var(--text-muted);
-  max-width: 450px;
-  margin: 0 auto 2rem;
-  line-height: 1.6;
+.not-found-text {
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  color: var(--brutal-black);
+  margin: 0 0 2rem;
+  line-height: 1.8;
+  text-transform: uppercase;
 }
 
-/* ========== ACTION BUTTONS ========== */
 .not-found-actions {
   display: flex;
+  flex-direction: column;
   gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.home-btn,
-.back-btn {
-  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
-  border-radius: var(--radius-md);
-  font-size: 1rem;
-  font-weight: 600;
+}
+
+/* Brutalist Buttons */
+.brutal-btn {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  font-family: 'Arial Black', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 900;
+  text-transform: uppercase;
   text-decoration: none;
-  transition: var(--transition-bounce);
+  border: var(--brutal-border);
+  transition: all 0.1s ease;
+  min-width: 200px;
+  cursor: pointer;
 }
 
-.home-btn {
-  background: var(--accent-gradient);
-  color: white;
+.brutal-btn.primary {
+  background: var(--brutal-black);
+  color: var(--brutal-white);
 }
 
-.home-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(123, 44, 191, 0.4);
-  color: white;
+.brutal-btn.primary:hover {
+  background: var(--brutal-pink);
+  color: var(--brutal-black);
+  transform: translate(-3px, -3px);
+  box-shadow: var(--brutal-shadow);
 }
 
-.back-btn {
-  background: transparent;
-  color: var(--accent-light);
-  border: 2px solid var(--accent-primary);
+.brutal-btn.secondary {
+  background: var(--brutal-white);
+  color: var(--brutal-black);
 }
 
-.back-btn:hover {
-  background: var(--accent-primary);
-  color: white;
+.brutal-btn.secondary:hover {
+  background: var(--brutal-yellow);
+  color: var(--brutal-black);
+  transform: translate(-3px, -3px);
+  box-shadow: var(--brutal-shadow);
 }
 
-/* ========== DECORATIVE ELEMENTS ========== */
+/* Decoration */
 .not-found-decoration {
-  position: relative;
-  margin-top: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 600px;
+}
+
+.deco-line {
+  flex: 1;
+  height: 3px;
+  background: var(--brutal-black);
 }
 
 .ghost {
-  font-size: 4rem;
-  opacity: 0.5;
-  animation: ghost-float 4s ease-in-out infinite;
+  font-size: 2.5rem;
+  animation: ghost-float 2s ease-in-out infinite;
 }
 
 @keyframes ghost-float {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  25% {
-    transform: translateY(-10px) rotate(-5deg);
-  }
-  75% {
-    transform: translateY(-10px) rotate(5deg);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
-/* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
   .not-found-page {
-    padding: 1rem;
+    padding: 2rem 1rem;
   }
   
-  .error-code {
-    font-size: 6rem;
+  .not-found-content {
+    padding: 2.5rem 1.5rem;
+    margin: 0 1rem 2rem;
   }
   
   .not-found-icon {
-    font-size: 5rem;
-  }
-  
-  .not-found-title {
-    font-size: 1.5rem;
-  }
-  
-  .not-found-description {
-    font-size: 1rem;
-    padding: 0 1rem;
-  }
-  
-  .not-found-actions {
-    flex-direction: column;
-    width: 100%;
-    max-width: 300px;
-  }
-  
-  .home-btn,
-  .back-btn {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .error-code {
     font-size: 4rem;
   }
   
-  .not-found-icon {
-    font-size: 3.5rem;
+  .not-found-code {
+    font-size: 5rem;
+    letter-spacing: -2px;
   }
   
   .not-found-title {
     font-size: 1.25rem;
   }
   
-  .not-found-description {
-    font-size: 0.95rem;
+  .not-found-text {
+    font-size: 0.9rem;
+  }
+  
+  .brutal-btn {
+    min-width: 180px;
+    padding: 0.85rem 1.5rem;
+    font-size: 0.8rem;
+  }
+  
+  .not-found-decoration {
+    max-width: 300px;
   }
   
   .ghost {
-    font-size: 2.5rem;
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .not-found-code {
+    font-size: 4rem;
+  }
+  
+  .not-found-actions {
+    width: 100%;
+  }
+  
+  .brutal-btn {
+    width: 100%;
+    min-width: auto;
   }
 }
