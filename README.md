@@ -81,6 +81,8 @@ The backend follows a **layered architecture** (Repository → Service → API) 
 
 
 <!-- 📸 Корзина: список добавленных товаров с фото, названием, ценой, количеством (можно изменить) и итоговой суммой. Кнопка "Оформить заказ". -->
+
+### Cart
 <img src="frontend/public/корзина.png" alt="screenshot">
 
 ## 🧰 Tech Stack
