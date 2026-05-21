@@ -33,7 +33,6 @@
 <!-- 📸 Главный скриншот: страница каталога с товарами, фильтрацией по категориям, поиском и пагинацией. Покажи основную сетку карточек товаров с ценами, фото и кнопками "В корзину". -->
 
 <img src="frontend/public/страница товаров.png" alt="screenshot">
----
 
 ## 💡 About The Project
 
@@ -84,6 +83,8 @@ The backend follows a **layered architecture** (Repository → Service → API) 
 
 ### Cart
 <img src="frontend/public/корзина.png" alt="screenshot">
+
+---
 
 ## 🧰 Tech Stack
 
