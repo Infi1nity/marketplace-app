@@ -86,6 +86,9 @@ def get_cart(
     
     cart.items = items
     
+    cart.total_items = sum(item.quantity for item in items)
+    cart.total_price = sum(item.quantity * (item.product.price if item.product else 0) for item in items)
+    
     return cart
 
 

@@ -10,7 +10,8 @@ function RegisterPage() {
     username: '',
     full_name: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    role: 'buyer'
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -143,6 +144,34 @@ function RegisterPage() {
               placeholder="John Doe"
               disabled={isLoading}
             />
+          </div>
+
+          <div className="form-group">
+            <label>Тип аккаунта</label>
+            <div className="role-selector">
+              <label className={`role-option ${formData.role === 'buyer' ? 'selected' : ''}`}>
+                <input
+                  type="radio"
+                  name="role"
+                  value="buyer"
+                  checked={formData.role === 'buyer'}
+                  onChange={handleChange}
+                />
+                <span className="role-icon">🛒</span>
+                <span className="role-label">Покупатель</span>
+              </label>
+              <label className={`role-option ${formData.role === 'seller' ? 'selected' : ''}`}>
+                <input
+                  type="radio"
+                  name="role"
+                  value="seller"
+                  checked={formData.role === 'seller'}
+                  onChange={handleChange}
+                />
+                <span className="role-icon">🏪</span>
+                <span className="role-label">Продавец</span>
+              </label>
+            </div>
           </div>
 
           <div className="form-row">

@@ -1,22 +1,27 @@
 from pydantic import BaseModel, EmailStr, Field, ConfigDict, model_validator
 from typing import Optional
 from datetime import datetime
+from enum import Enum
+
+
+class UserRole(str, Enum):
+    BUYER = "buyer"
+    SELLER = "seller"
+    ADMIN = "admin"
 
 
 class UserBase(BaseModel):
-    """Общие поля пользователя"""
     email: EmailStr
     username: str = Field(..., min_length=3, max_length=50, pattern="^[a-zA-Z0-9_]+$")
     full_name: Optional[str] = Field(None, min_length=1, max_length=100)
 
 
 class UserCreate(UserBase):
-    """Регистрация нового пользователя"""
     password: str = Field(..., min_length=6, max_length=72)
+    role: UserRole = UserRole.BUYER
     
     @model_validator(mode='after')
     def validate_password_length(self) -> 'UserCreate':
-        """Проверка длины пароля в байтах (ограничение bcrypt)"""
         if self.password and len(self.password.encode('utf-8')) > 72:
             raise ValueError('Password too long for bcrypt (max 72 bytes)')
         return self
@@ -36,10 +41,10 @@ class UserLogin(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    """Обновление данных пользователя (все поля опциональные)"""
     email: Optional[EmailStr] = None
     username: Optional[str] = Field(None, min_length=3, max_length=50, pattern="^[a-zA-Z0-9_]+$")
     full_name: Optional[str] = Field(None, min_length=1, max_length=100)
+    phone: Optional[str] = Field(None, max_length=20)
 
 
 class UserPasswordChange(BaseModel):
@@ -68,8 +73,14 @@ class UserRead(BaseModel):
     email: EmailStr
     username: str
     full_name: Optional[str] = None
+    role: UserRole = UserRole.BUYER
     is_active: bool
-    is_superuser: bool
+    is_superuser: bool = False
+    shop_name: Optional[str] = None
+    shop_description: Optional[str] = None
+    shop_logo: Optional[str] = None
+    phone: Optional[str] = None
+    is_verified_seller: bool = False
     created_at: datetime
     updated_at: Optional[datetime] = None
     last_login: Optional[datetime] = None
@@ -114,6 +125,7 @@ class TokenPayload(BaseModel):
     iat: Optional[int] = None  # issued at
     email: Optional[str] = None
     username: Optional[str] = None
+    role: Optional[str] = None
     is_superuser: bool = False
 
 # class UserRead(BaseModel):
@@ -133,18 +145,22 @@ class TokenPayload(BaseModel):
 # ========== ДЛЯ АДМИНИСТРИРОВАНИЯ ==========
 
 class UserAdminCreate(UserCreate):
-    """Создание пользователя администратором"""
     is_active: bool = True
     is_superuser: bool = False
 
 class UserAdminUpdate(BaseModel):
-    """Обновление пользователя администратором"""
     email: Optional[EmailStr] = None
     username: Optional[str] = Field(None, min_length=3, max_length=50, pattern="^[a-zA-Z0-9_]+$")
     full_name: Optional[str] = Field(None, min_length=1, max_length=100)
+    role: Optional[UserRole] = None
     is_active: Optional[bool] = None
     is_superuser: Optional[bool] = None
     password: Optional[str] = Field(None, min_length=6)
+    shop_name: Optional[str] = None
+    shop_description: Optional[str] = None
+    shop_logo: Optional[str] = None
+    phone: Optional[str] = None
+    is_verified_seller: Optional[bool] = None
 
 # ========== ДЛЯ СПИСКОВ ==========
 

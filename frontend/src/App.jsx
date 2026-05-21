@@ -17,6 +17,15 @@ import CheckoutPage from './pages/CheckoutPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailPage from './pages/OrderDetailPage';
 import CartPage from './pages/CartPage';
+import SellerDashboard from './pages/seller/SellerDashboard';
+import SellerProducts from './pages/seller/SellerProducts';
+import SellerOrders from './pages/seller/SellerOrders';
+import SellerProfile from './pages/seller/SellerProfile';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminProducts from './pages/admin/AdminProducts';
+import AdminOrders from './pages/admin/AdminOrders';
+import AdminCategories from './pages/admin/AdminCategories';
 
 function App() {
   return (
@@ -28,27 +37,26 @@ function App() {
               <Header />
               <main className="main-content">
                 <Routes>
-                  {/* Главная страница */}
                   <Route path="/" element={<Home />} />
-                  {/* Каталог товаров */}
                   <Route path="/products" element={<ProductListPage />} />
-                  {/* Страница товара по ID */}
                   <Route path="/product/:id" element={<ProductDetail />} />
-                  {/* Корзина */}
                   <Route path="/cart" element={<CartPage />} />
-                  {/* Профиль */}
                   <Route path="/profile" element={<ProfilePage />} />
-                  {/* Авторизация */}
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
-                  {/* Оформление заказа */}
                   <Route path="/checkout" element={<CheckoutPage />} />
-                  {/* Заказы */}
                   <Route path="/orders" element={<OrdersPage />} />
                   <Route path="/orders/:orderId" element={<OrderDetailPage />} />
-                  {/* Избранное */}
                   <Route path="/favorites" element={<FavoritesPage />} />
-                  {/* 404 */}
+                  <Route path="/seller" element={<SellerDashboard />} />
+                  <Route path="/seller/products" element={<SellerProducts />} />
+                  <Route path="/seller/orders" element={<SellerOrders />} />
+                  <Route path="/seller/profile" element={<SellerProfile />} />
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/admin/users" element={<AdminUsers />} />
+                  <Route path="/admin/products" element={<AdminProducts />} />
+                  <Route path="/admin/orders" element={<AdminOrders />} />
+                  <Route path="/admin/categories" element={<AdminCategories />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>

@@ -115,6 +115,8 @@ export const AuthProvider = ({ children }) => {
     loading,
     error,
     isAuthenticated: !!user,
+    isSeller: user?.role === 'seller' || user?.role === 'admin',
+    isAdmin: user?.role === 'admin',
     login,
     register,
     logout,

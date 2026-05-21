@@ -39,6 +39,7 @@ def register(
         username=userData.username,
         full_name=userData.full_name,
         hashed_password=hashed_password,
+        role=userData.role,
         is_active=True,
         is_superuser=False
     )
@@ -55,8 +56,13 @@ def login(
     db: Session = Depends(get_db)
 ):
     """Вход в систему (получение токена)"""
-    # Поиск пользователя по email
-    user = db.query(User).filter(User.email == user_data.email).first()
+    # Поиск пользователя по email или username
+    user = None
+    if user_data.email:
+        user = db.query(User).filter(User.email == user_data.email).first()
+    elif user_data.username:
+        user = db.query(User).filter(User.username == user_data.username).first()
+    
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     
@@ -71,7 +77,7 @@ def login(
     # Создание токена
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = security.create_access_token(
-        data={"sub": str(user.id)}, 
+        data={"sub": str(user.id), "role": user.role.value if hasattr(user.role, 'value') else user.role}, 
         expires_delta=access_token_expires
     )
     

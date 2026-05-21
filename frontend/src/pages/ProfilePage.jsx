@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import './ProfilePage.css';
 
 function ProfilePage() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isSeller, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -38,6 +38,11 @@ function ProfilePage() {
         <aside className="profile-sidebar">
           <div className="profile-avatar">
             <span className="avatar-icon">👤</span>
+            {user?.role && (
+              <span className={`role-badge role-${user.role}`}>
+                {user.role === 'admin' ? 'ADMIN' : user.role === 'seller' ? 'SELLER' : 'BUYER'}
+              </span>
+            )}
           </div>
           <div className="profile-user-info">
             <h3 className="profile-username">{user?.username}</h3>
@@ -57,6 +62,18 @@ function ProfilePage() {
               <span className="menu-icon">🛒</span>
               <span>Корзина</span>
             </Link>
+            {isSeller && (
+              <Link to="/seller" className="profile-menu-item">
+                <span className="menu-icon">🏪</span>
+                <span>Панель продавца</span>
+              </Link>
+            )}
+            {isAdmin && (
+              <Link to="/admin" className="profile-menu-item">
+                <span className="menu-icon">⚙️</span>
+                <span>Панель администратора</span>
+              </Link>
+            )}
           </div>
 
           <button onClick={handleLogout} className="logout-btn">
@@ -79,6 +96,16 @@ function ProfilePage() {
                 <span className="info-label">Email</span>
                 <span className="info-value">{user?.email || 'Не указан'}</span>
               </div>
+              <div className="info-card">
+                <span className="info-label">Роль</span>
+                <span className="info-value">{user?.role === 'admin' ? 'Администратор' : user?.role === 'seller' ? 'Продавец' : 'Покупатель'}</span>
+              </div>
+              {user?.shop_name && (
+                <div className="info-card">
+                  <span className="info-label">Магазин</span>
+                  <span className="info-value">{user.shop_name}</span>
+                </div>
+              )}
               {user?.phone && (
                 <div className="info-card">
                   <span className="info-label">Телефон</span>

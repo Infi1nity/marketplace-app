@@ -138,6 +138,16 @@ function Header() {
               <Link to="/profile" className="profile-icon">
                 {user?.username}
               </Link>
+              {user?.role === 'seller' && (
+                <Link to="/seller" className="seller-link">
+                  Панель продавца
+                </Link>
+              )}
+              {user?.role === 'admin' && (
+                <Link to="/admin" className="admin-link">
+                  Панель администратора
+                </Link>
+              )}
               <button onClick={handleLogout} className="logout-btn">
                 Выйти
               </button>
@@ -242,7 +252,13 @@ function Header() {
               <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
                 Профиль
               </Link>
-              <Link to="/orders">Заказы</Link>
+              <Link to="/orders" onClick={() => setMobileMenuOpen(false)}>Заказы</Link>
+              {user?.role === 'seller' && (
+                <Link to="/seller" onClick={() => setMobileMenuOpen(false)}>Панель продавца</Link>
+              )}
+              {user?.role === 'admin' && (
+                <Link to="/admin" onClick={() => setMobileMenuOpen(false)}>Панель администратора</Link>
+              )}
               <button onClick={handleLogout} className="mobile-logout-btn">
                 Выйти
               </button>

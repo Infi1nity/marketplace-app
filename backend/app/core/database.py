@@ -34,7 +34,7 @@ def get_db():
     finally:
         db.close()
 
-from app.modules.users.models import User
+from app.modules.users.models import User, UserRole
 from app.modules.products.models import Product, Category
 from app.modules.cart.models import Cart, CartItem
 from app.modules.favorites.models import Favorite

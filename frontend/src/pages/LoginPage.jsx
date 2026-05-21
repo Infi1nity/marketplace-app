@@ -121,12 +121,6 @@ function LoginPage() {
             )}
           </div>
 
-          <div className="form-options">
-            <Link to="/forgot-password" className="forgot-link">
-              Забыли пароль?
-            </Link>
-          </div>
-
           <button 
             type="submit" 
             className="auth-btn"

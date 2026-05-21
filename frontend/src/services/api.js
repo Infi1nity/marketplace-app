@@ -10,6 +10,8 @@ const api = axios.create({
   }
 });
 
+export const API_ORIGIN = 'http://localhost:8000';
+
 // 👇 ПЕРЕХВАТЧИК ЗАПРОСОВ - добавляет токен к каждому запросу
 api.interceptors.request.use(
   (config) => {

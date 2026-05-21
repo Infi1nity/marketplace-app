@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from app.core.database import engine
 from sqlalchemy import text
 from app.core.database import SessionLocal
@@ -9,8 +10,14 @@ from app.modules.users.router import router as users_router
 from app.modules.cart.router import router as cart_router
 from app.modules.favorites.router import router as favorites_router
 from app.modules.orders.router import router as orders_router
+from app.modules.seller.router import router as seller_router
+from app.modules.admin.router import router as admin_router
 
 app = FastAPI(title="marketplace-app")
+
+import os
+os.makedirs("uploads", exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 
 origins = [
@@ -52,3 +59,5 @@ app.include_router(users_router, prefix='/api/v1', tags=["Auth"])
 app.include_router(cart_router, prefix='/api/v1', tags=["Cart"])
 app.include_router(favorites_router, prefix='/api/v1', tags=["Favorites"])
 app.include_router(orders_router, prefix="/api/v1", tags=["Orders"])
+app.include_router(seller_router, prefix="/api/v1", tags=["Seller"])
+app.include_router(admin_router, prefix="/api/v1", tags=["Admin"])

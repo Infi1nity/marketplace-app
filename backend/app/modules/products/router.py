@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import List, Optional
 
 from app.core.database import get_db
@@ -16,7 +16,7 @@ def get_products(db: Session = Depends(get_db),
                  skip: int = Query(0, ge=0),
                  limit: int = Query(100, ge=1, le=100)
 ):
-    query = db.query(Product)
+    query = db.query(Product).options(joinedload(Product.seller))
     
     # Фильтрация по category_id
     if category_id:
@@ -51,7 +51,7 @@ def get_products(db: Session = Depends(get_db),
 
 @product_router.get("/{slug}", response_model=schemas.ProductRead)
 def get_product(slug: str, db: Session = Depends(get_db)):
-    product = db.query(Product).filter(Product.slug == slug).first()
+    product = db.query(Product).options(joinedload(Product.seller)).filter(Product.slug == slug).first()
 
     if not product:
         raise HTTPException(404, detail=f"Product with slug '{slug}' not found")
@@ -62,7 +62,7 @@ def get_product(slug: str, db: Session = Depends(get_db)):
 
 @product_router.get("/id/{product_id}", response_model=schemas.ProductRead)
 def get_product_by_id(product_id: int, db: Session = Depends(get_db)):
-    product = db.query(Product).filter(Product.id == product_id).first()
+    product = db.query(Product).options(joinedload(Product.seller)).filter(Product.id == product_id).first()
 
     if not product:
         raise HTTPException(404, detail=f"Product with id '{product_id}' not found")

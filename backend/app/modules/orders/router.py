@@ -152,7 +152,7 @@ def create_order(
     # 3. Создаем заказ
     new_order = Order(
         user_id=current_user.id,
-        status=schemas.OrderStatus.PENDING,
+        status=OrderStatus.PENDING,
         total_amount=total_amount,
         shipping_address=order_data.shipping_address,
         contact_phone=order_data.contact_phone
@@ -244,7 +244,7 @@ def cancel_order(
             detail="Order not found"
         )
     
-    if order.status != schemas.OrderStatus.PENDING:
+    if order.status != OrderStatus.PENDING:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Only pending orders can be cancelled"
@@ -257,7 +257,7 @@ def cancel_order(
         if product:
             product.stock += item.quantity
     
-    order.status = schemas.OrderStatus.CANCELLED
+    order.status = OrderStatus.CANCELLED
     order.updated_at = datetime.now()
     db.commit()
     

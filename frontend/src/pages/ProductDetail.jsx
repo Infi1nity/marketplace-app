@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router';
 import { productsApi } from '../services/products';
 import { useFavorites } from '../contexts/FavoritesContext';
 import AddToCartButton from '../components/AddToCartButton';
+import { API_ORIGIN } from '../services/api';
 import './ProductDetail.css';
 
 export default function ProductDetail() {
@@ -59,11 +60,13 @@ export default function ProductDetail() {
       </button>
 
       <div className="product-detail-container">
-        <div className="product-detail-image">
+<div className="product-detail-image">
           {product.image ? (
-            <img src={product.image} alt={product.name} />
+            <img src={`${API_ORIGIN}${product.image}`} alt={product.name}
+              onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<div class=\"no-image\">NO PHOTO</div>'; }}
+            />
           ) : (
-            <div className="no-image">НЕТ ФОТО</div>
+            <div className="no-image">NO PHOTO</div>
           )}
         </div>
 

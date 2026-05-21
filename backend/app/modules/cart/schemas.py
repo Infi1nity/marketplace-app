@@ -1,5 +1,5 @@
 # backend/app/modules/cart/schemas.py
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, computed_field
 from typing import Optional, List
 from datetime import datetime
 

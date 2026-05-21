@@ -12,7 +12,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 from alembic import context
 
 from app.core.database import Base
-from app.modules.users.models import User
+from app.modules.users.models import User, UserRole
 from app.modules.products.models import Product, Category
 from app.modules.cart.models import Cart, CartItem
 from app.modules.favorites.models import Favorite

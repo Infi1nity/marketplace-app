@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { useFavorites } from '../contexts/FavoritesContext';
 import AddToCartButton from './AddToCartButton';
+import { API_ORIGIN } from '../services/api';
 import './ProductCard.css';
 
 function ProductCard({ product }) {
@@ -21,13 +22,14 @@ function ProductCard({ product }) {
       <Link to={`/product/${product.id}`} className="product-image-link">
         {product.image ? (
           <img 
-            src={product.image} 
+            src={`${API_ORIGIN}${product.image}`}
             alt={product.name} 
             className="product-image"
+            onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<div class=\"product-image-placeholder\">NO PHOTO</div>'; }}
           />
         ) : (
           <div className="product-image-placeholder">
-            НЕТ ФОТО
+            NO PHOTO
           </div>
         )}
       </Link>

@@ -11,7 +11,6 @@ class Category(Base):
     description = Column(Text, nullable=True)
     parent_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
     
-    # Связи
     parent = relationship("Category", remote_side=[id], backref="children")
     products = relationship("Product", back_populates="category")
 
@@ -26,15 +25,16 @@ class Product(Base):
     stock = Column(Integer, default=0)
     is_active = Column(Boolean, default=True)
     
-    # 👇 НОВОЕ ПОЛЕ ДЛЯ ИЗОБРАЖЕНИЯ
-    image = Column(String(500), nullable=True)  # URL изображения
+    image = Column(String(500), nullable=True)
     
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
+    seller_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     
     category = relationship("Category", back_populates="products")
+    seller = relationship("User", back_populates="products", foreign_keys=[seller_id])
     cart_items = relationship("CartItem", back_populates="product")
     order_items = relationship("OrderItem", back_populates="product")
     favorited_by = relationship("Favorite", back_populates="product")
